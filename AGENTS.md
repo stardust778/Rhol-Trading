@@ -31,7 +31,7 @@
 cd /Users/lirihao/Vibe-Trading && source .venv/bin/activate
 python -m pytest agent/tests/test_base_engine.py -q      # 冒烟（1 秒，104 passed）
 python -m pytest --ignore=agent/tests/e2e_backtest --ignore=agent/tests/test_e2e_harness_v2.py -q
-vibe-trading init                                        # 配置 LLM key（尚未配置）
+# LLM 已配置为 deepseek-v4-flash，只差 ~/.vibe-trading/.env 里的 DEEPSEEK_API_KEY
 vibe-trading                                             # CLI/TUI
 vibe-trading serve --port 8899                           # Web（dist 已构建）
 ```

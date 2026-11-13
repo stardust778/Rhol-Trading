@@ -57,3 +57,39 @@ ChatLLM
 pytest agent/tests/test_llm_provider_defaults.py agent/tests/test_chat_llm_streaming.py -q
 pytest agent/tests/test_provider_agnostic_tool_policy.py agent/tests/test_provider_endpoint_guard.py -q
 ```
+
+---
+
+## 当前配置（2026-11-13）
+
+文件：`~/.vibe-trading/.env`（0600，**不在仓库里**）
+
+```ini
+LANGCHAIN_PROVIDER=deepseek
+LANGCHAIN_MODEL_NAME=deepseek-v4-flash      # 默认
+DEEPSEEK_API_KEY=                            # ← 待填
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+VIBE_TRADING_CONTEXT_WINDOW=1000000
+```
+
+验证：`vibe-trading provider doctor` → provider=deepseek / model=deepseek-v4-flash / adapter=native（`langchain-deepseek 1.1.1` 已装）。
+
+### 切到 pro
+
+改一行即可，无需重启其他东西：
+
+```bash
+sed -i '' 's/^LANGCHAIN_MODEL_NAME=.*/LANGCHAIN_MODEL_NAME=deepseek-v4-pro/' ~/.vibe-trading/.env
+vibe-trading provider doctor | head -4      # 确认
+```
+
+或在 Web → Settings → LLM 里选（会写回同一个文件）。
+
+### 注意
+
+- **上下文预算是 1M，但单轮 prompt 上限是 200K**（`VIBE_TRADING_CONTEXT_MAX_TOKENS`，成本护栏）。
+  想放宽就往 `.env` 里加 `VIBE_TRADING_CONTEXT_MAX_TOKENS=400000`。
+- 内置 `context_windows.json` 的正则只覆盖 `deepseek-v4-pro` 和 `deepseek-flash`，
+  `deepseek-v4-flash` 这个名字匹配不到，所以已在 `.env` 显式声明窗口，别删那行。
+- 模型 id 若报 404/400，先用 key 确认真实 id：
+  `curl -s https://api.deepseek.com/models -H "Authorization: Bearer $DEEPSEEK_API_KEY"`

@@ -58,13 +58,13 @@
 | 项目依赖 | `pip install -e ".[dev]"` + `.[stats]` 完成，约 250 个包 |
 | Node | **22.23.5**（brew `node@22`；注意你的 shell 把 Node 18 固定在 PATH 前面） |
 | 前端 | `npm ci` + `npm run build` 完成，`frontend/dist/` 已生成 |
-| LLM provider | ❌ **未配置** —— 跑 `vibe-trading init` 填 key |
+| LLM provider | ✅ `deepseek-v4-flash`（`~/.vibe-trading/.env`），**key 待填** |
 
 ```bash
 cd /Users/lirihao/Vibe-Trading && source .venv/bin/activate
 
 python -m pytest agent/tests/test_base_engine.py -q        # 冒烟，104 passed
-vibe-trading init                                          # 配置 LLM key（交互式）
+# 填 key：编辑 ~/.vibe-trading/.env 的 DEEPSEEK_API_KEY=（或 Web → Settings → LLM）
 vibe-trading                                               # CLI/TUI
 vibe-trading serve --port 8899                             # Web（已构建，直接可用）
 ```
