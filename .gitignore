@@ -195,3 +195,11 @@ agent/tests/artifacts/
 # Prerendered docs pages (written by wiki/scripts/prerender_docs.mjs at deploy time)
 wiki/docs/latest/
 wiki/docs/zh/
+
+# ── Local fork: versioned agent-facing development docs ──────────────────
+# Upstream treats docs/ as internal drafts and AGENTS.md as a generated
+# alias, so both are ignored above. This fork maintains them as real,
+# reviewable docs. The negations must stay last: git cannot re-include a
+# file whose parent directory is excluded, so `!docs/` must follow `docs/`.
+!docs/
+!AGENTS.md
