@@ -40,7 +40,9 @@
       "pixelOffice": "調査タスクを計画・割り当てます。割り当てでは実行は始まりません。役職はラベルであり、取引権限を付与しません。",
       "paperTrading": "仮想資金で日次取引を検証します。証券会社へ注文は送りません。現金配当を含まず、総収益ではありません。",
       "researchArtifacts": "証拠に基づく分析をセッション間で保存して再利用します。",
-      "researchLab": "取引コスト、固定パラメータによるサンプル外成績、ファクター定義と保存済み証拠を検証します。"
+      "researchLab": "取引コスト、固定パラメータによるサンプル外成績、ファクター定義と保存済み証拠を検証します。",
+      "market": "戦略を決める前に、あらゆる銘柄のローソク足を確認できます。",
+      "journal": "自分の約定・損益・行動バイアスを振り返ります。"
     },
     "instructions": {
       "reports": "まずアシスタントに戦略のバックテストを依頼し、ここで結果を開きます。会話で作成した PDF などは元の会話からダウンロードします。",
@@ -54,7 +56,9 @@
       "pixelOffice": "調査タスクを計画・割り当てます。割り当てでは実行は始まりません。役職はラベルであり、取引権限を付与しません。",
       "paperTrading": "確定した日足のみを使用します。戦略は前日までのデータを読み、執行日の終値で約定します。通常の取引終了から30分お待ちください。自動実行は設定されません。",
       "researchArtifacts": "過去の分析を検索し、任意のリビジョンを開くか、新しい証拠で関連リビジョンを作成します。古い結論は変更されません。",
-      "researchLab": "取引コスト、固定パラメータによるサンプル外成績、ファクター定義と保存済み証拠を検証します。"
+      "researchLab": "取引コスト、固定パラメータによるサンプル外成績、ファクター定義と保存済み証拠を検証します。",
+      "market": "取引所サフィックス付きのコードを入力し、期間と足種を選びます。オーバーレイやサブパネル、ズームはチャート上の操作で、このページはデータを書き込みません。",
+      "journal": "証券会社の明細を取り込み、銘柄を開くと自分の売買点がチャートに表示されます。ここでは発注しません。"
     }
   },
   "layout": {
@@ -88,7 +92,9 @@
     "pixelOffice": "ピクセルオフィス",
     "paperTrading": "模擬取引",
     "researchArtifacts": "リサーチ成果物",
-    "researchLab": "リサーチラボ"
+    "researchLab": "リサーチラボ",
+    "market": "マーケット",
+    "journal": "取引レビュー"
   },
   "researchArtifacts": {
     "compareTitle": "リビジョン比較",
@@ -2774,5 +2780,75 @@
     "rolling": "ローリング",
     "expanding": "拡張",
     "invalidChoices": "各候補に値を入力してください。"
+  },
+  "market": {
+    "title": "マーケットとK線",
+    "subtitle": "日足・週足・月足のOHLCV。移動平均、出来高、モメンタムのサブパネル付き。",
+    "symbol": "銘柄コード",
+    "symbolPlaceholder": "例: 000001.SZ",
+    "load": "読み込む",
+    "range": "期間",
+    "interval": "足種",
+    "interval_1D": "日足",
+    "interval_1W": "週足",
+    "interval_1M": "月足",
+    "source": "データソース",
+    "caliber": "価格基準",
+    "bars": "本",
+    "empty": "この銘柄と期間のデータはありません。",
+    "error": "市場データの読み込みに失敗しました。",
+    "hint": "A株のコードには取引所サフィックス（.SH / .SZ / .BJ）が必要です。チャートとバックテストは同じローダーを使うため、ここで表示できる銘柄はバックテストも可能です。"
+  },
+  "journal": {
+    "title": "取引レビュー",
+    "subtitle": "証券会社の取引明細を取り込み、実際の売買行動を確認します。",
+    "importBtn": "明細を取り込む",
+    "importing": "取り込み中…",
+    "formats": "招商証券 / 華泰 / 中信 / 同花順 / 東方財富の CSV・Excel に対応。重複する月を再取り込みしても新規約定だけが追加されます。",
+    "empty": "まだ約定がありません",
+    "emptyHint": "証券会社のアプリやPCから「交割単／対帳単」を CSV か Excel で書き出し、ここに取り込んでください。データはこの端末内に留まります。",
+    "importOk": "{{inserted}} 件を取り込み、{{duplicates}} 件の重複をスキップしました",
+    "importFailed": "取り込みに失敗しました",
+    "loadFailed": "取引履歴を読み込めませんでした",
+    "deleteFailed": "取り込みを削除できませんでした",
+    "delete": "この取り込みを削除",
+    "trades": "件",
+    "symbols": "銘柄",
+    "duplicates": "件の重複",
+    "totalPnl": "実現損益",
+    "winRate": "勝率",
+    "pnlRatio": "損益比",
+    "avgHold": "平均保有",
+    "frequency": "週あたり取引",
+    "maxDrawdown": "最大ドローダウン",
+    "days": "日",
+    "week": "週",
+    "behavior": "行動診断",
+    "disposition_effect": "処分効果",
+    "overtrading": "過剰取引",
+    "chasing_momentum": "高値追い",
+    "anchoring": "アンカリング",
+    "severity_low": "低",
+    "severity_medium": "中",
+    "severity_high": "高",
+    "monthly": "月別実現損益",
+    "topSymbols": "取引の多い銘柄",
+    "ledger": "約定一覧",
+    "colTime": "時刻",
+    "colSymbol": "銘柄",
+    "colSide": "売買",
+    "colQty": "数量",
+    "colPrice": "価格",
+    "colAmount": "金額",
+    "colFee": "手数料",
+    "side_buy": "買い",
+    "side_sell": "売り",
+    "side_dividend": "配当",
+    "imports": "取り込んだファイル",
+    "chartTitle": "{{symbol}} と自分の売買点",
+    "chartHint": "B/S は自分の約定位置",
+    "hideChart": "チャートを閉じる",
+    "chartEmpty": "この銘柄のチャートデータがありません",
+    "chartFailed": "チャートを読み込めませんでした"
   }
 }

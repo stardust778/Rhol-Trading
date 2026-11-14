@@ -40,7 +40,9 @@
       "pixelOffice": "리서치 작업을 계획하고 배정합니다. 배정만으로 실행되지는 않으며, 직급은 거래 권한을 부여하지 않는 표시에 불과합니다.",
       "paperTrading": "가상 자금으로 일별 거래를 테스트합니다. 증권사에 주문을 보내지 않습니다. 현금 배당을 제외하므로 총수익이 아닙니다.",
       "researchArtifacts": "근거 기반 분석을 세션 간에 저장하고 재사용합니다.",
-      "researchLab": "거래 비용, 고정 매개변수의 표본 외 성과, 팩터 정의와 저장된 증거를 검증합니다."
+      "researchLab": "거래 비용, 고정 매개변수의 표본 외 성과, 팩터 정의와 저장된 증거를 검증합니다.",
+      "market": "전략을 정하기 전에 모든 종목의 캔들 차트를 확인하세요.",
+      "journal": "내 체결·손익·행태 편향을 돌아봅니다."
     },
     "instructions": {
       "reports": "먼저 도우미에게 전략 백테스트를 요청한 후 여기에서 결과를 엽니다. 대화에서 생성한 PDF 등은 원래 대화에서 다운로드하세요.",
@@ -54,7 +56,9 @@
       "pixelOffice": "리서치 작업을 계획하고 배정합니다. 배정만으로 실행되지는 않으며, 직급은 거래 권한을 부여하지 않는 표시에 불과합니다.",
       "paperTrading": "완료된 일봉만 결산합니다. 전략은 이전 날짜의 데이터만 읽고 실행일 종가로 체결됩니다. 정규장 종료 후 30분을 기다리세요. 자동 실행은 예약되지 않습니다.",
       "researchArtifacts": "이전 분석을 검색하고,원하는 리비전을 열거나, 새 증거로 연결된 리비전을 만드세요. 이전 결론은 변경되지 않습니다.",
-      "researchLab": "거래 비용, 고정 매개변수의 표본 외 성과, 팩터 정의와 저장된 증거를 검증합니다."
+      "researchLab": "거래 비용, 고정 매개변수의 표본 외 성과, 팩터 정의와 저장된 증거를 검증합니다.",
+      "market": "거래소 접미사가 붙은 코드를 입력한 뒤 기간과 주기를 선택하세요. 보조지표, 보조 패널, 확대는 차트 조작이며 이 페이지는 데이터를 쓰지 않습니다.",
+      "journal": "증권사 거래내역을 가져온 뒤 종목을 열면 내 매매 지점이 차트에 표시됩니다. 이 페이지에서는 주문하지 않습니다."
     }
   },
   "layout": {
@@ -88,7 +92,9 @@
     "pixelOffice": "픽셀 오피스",
     "paperTrading": "모의 거래",
     "researchArtifacts": "연구 산출물",
-    "researchLab": "리서치 실험실"
+    "researchLab": "리서치 실험실",
+    "market": "시장",
+    "journal": "매매 리뷰"
   },
   "researchArtifacts": {
     "compareTitle": "리비전 비교",
@@ -2774,5 +2780,75 @@
     "rolling": "이동 구간",
     "expanding": "확장 구간",
     "invalidChoices": "모든 후보 값을 입력하세요."
+  },
+  "market": {
+    "title": "시장 및 K선",
+    "subtitle": "일봉·주봉·월봉 OHLCV와 이동평균, 거래량, 모멘텀 보조 패널.",
+    "symbol": "종목 코드",
+    "symbolPlaceholder": "예: 000001.SZ",
+    "load": "불러오기",
+    "range": "기간",
+    "interval": "주기",
+    "interval_1D": "일봉",
+    "interval_1W": "주봉",
+    "interval_1M": "월봉",
+    "source": "데이터 소스",
+    "caliber": "가격 기준",
+    "bars": "개",
+    "empty": "이 종목과 기간에 데이터가 없습니다.",
+    "error": "시장 데이터를 불러오지 못했습니다.",
+    "hint": "A주 코드에는 거래소 접미사(.SH / .SZ / .BJ)가 필요합니다. 차트와 백테스트는 같은 로더를 사용하므로 여기서 표시되는 종목은 백테스트도 가능합니다."
+  },
+  "journal": {
+    "title": "매매 리뷰",
+    "subtitle": "증권사 거래내역을 불러와 실제 매매 행태를 확인합니다.",
+    "importBtn": "거래내역 가져오기",
+    "importing": "가져오는 중…",
+    "formats": "招商증권 / 华泰 / 中信 / 同花顺 / 东方财富의 CSV·Excel을 지원합니다. 겹치는 달을 다시 가져와도 신규 체결만 추가됩니다.",
+    "empty": "아직 체결 내역이 없습니다",
+    "emptyHint": "증권사 앱이나 PC에서 '거래내역서'를 CSV 또는 Excel로 내려받아 여기에서 가져오세요. 데이터는 이 기기에만 저장됩니다.",
+    "importOk": "{{inserted}}건을 가져오고 {{duplicates}}건 중복을 건너뛰었습니다",
+    "importFailed": "가져오기에 실패했습니다",
+    "loadFailed": "거래 기록을 불러오지 못했습니다",
+    "deleteFailed": "가져오기를 삭제하지 못했습니다",
+    "delete": "이 가져오기 삭제",
+    "trades": "건",
+    "symbols": "종목",
+    "duplicates": "건 중복",
+    "totalPnl": "실현 손익",
+    "winRate": "승률",
+    "pnlRatio": "손익비",
+    "avgHold": "평균 보유",
+    "frequency": "주당 매매",
+    "maxDrawdown": "최대 낙폭",
+    "days": "일",
+    "week": "주",
+    "behavior": "행태 진단",
+    "disposition_effect": "처분 효과",
+    "overtrading": "과잉 매매",
+    "chasing_momentum": "추격 매수",
+    "anchoring": "앵커링",
+    "severity_low": "낮음",
+    "severity_medium": "보통",
+    "severity_high": "높음",
+    "monthly": "월별 실현 손익",
+    "topSymbols": "거래가 많은 종목",
+    "ledger": "체결 내역",
+    "colTime": "시간",
+    "colSymbol": "종목",
+    "colSide": "구분",
+    "colQty": "수량",
+    "colPrice": "가격",
+    "colAmount": "금액",
+    "colFee": "수수료",
+    "side_buy": "매수",
+    "side_sell": "매도",
+    "side_dividend": "배당",
+    "imports": "가져온 파일",
+    "chartTitle": "{{symbol}}와 내 매매 지점",
+    "chartHint": "B/S 표시는 내 체결입니다",
+    "hideChart": "차트 닫기",
+    "chartEmpty": "이 종목의 차트 데이터가 없습니다",
+    "chartFailed": "차트를 불러오지 못했습니다"
   }
 }

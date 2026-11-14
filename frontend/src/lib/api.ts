@@ -89,6 +89,109 @@ export function isAuthRequiredError(error: unknown): boolean {
   return error instanceof ApiError && (error.status === 401 || error.status === 403);
 }
 
+export interface JournalImportBatch {
+  import_id: string;
+  filename: string;
+  format: string;
+  records: number;
+  inserted: number;
+  duplicates: number;
+  first_date: string | null;
+  last_date: string | null;
+  created_at: string;
+}
+
+export interface JournalSummary {
+  records: number;
+  symbols: number;
+  first_date: string | null;
+  last_date: string | null;
+  imports: number;
+  batches: JournalImportBatch[];
+}
+
+export interface JournalTrade {
+  trade_id: string;
+  datetime: string;
+  symbol: string;
+  name: string;
+  side: "buy" | "sell" | "dividend";
+  quantity: number;
+  price: number;
+  amount: number;
+  fee: number;
+  market: string;
+}
+
+export interface JournalBehaviorMetric {
+  severity: "low" | "medium" | "high";
+  evidence?: string;
+  [key: string]: unknown;
+}
+
+export interface JournalMonthlyPnl {
+  month: string;
+  pnl: number;
+  trades: number;
+  wins: number;
+  losses: number;
+}
+
+export interface JournalRoundtrip {
+  symbol: string;
+  buy_dt: string;
+  sell_dt: string;
+  qty: number;
+  buy_price: number;
+  sell_price: number;
+  hold_days: number;
+  pnl: number;
+  pnl_pct: number;
+  side: string;
+  currency: string;
+}
+
+export interface JournalAnalysis {
+  status: "ok" | "empty";
+  records: number;
+  date_range?: string;
+  symbols?: number;
+  profile?: Record<string, unknown>;
+  behavior?: Record<string, JournalBehaviorMetric>;
+  monthly_pnl?: JournalMonthlyPnl[];
+  roundtrips?: JournalRoundtrip[];
+}
+
+export interface JournalTradeList {
+  status: string;
+  symbol: string | null;
+  count: number;
+  trades: JournalTrade[];
+}
+
+export interface MarketBar {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+export interface MarketOhlcResponse {
+  symbol: string;
+  interval: string;
+  start: string;
+  end: string;
+  source: string | null;
+  requested_source?: string | null;
+  detected_source?: string | null;
+  fallback_used: boolean;
+  adjustment: string | null;
+  volume_unit: string | null;
+  bars: MarketBar[];
+}
+
 export interface CorrelationResponse {
   labels: string[];
   // Undefined pairs (zero-variance leg — halted series, pegged stablecoin,
@@ -632,6 +735,35 @@ export const api = {
     request<CorrelationRegimeResponse>(
       `/correlation/regime?codes=${encodeURIComponent(codes)}&days=${encodeURIComponent(String(days))}`,
     ),
+  getJournalSummary: () => request<JournalSummary>("/api/journal/summary"),
+  getJournalAnalysis: () => request<JournalAnalysis>("/api/journal/analysis"),
+  getJournalTrades: (symbol?: string, limit = 500) => {
+    const search = new URLSearchParams({ limit: String(limit) });
+    if (symbol) search.set("symbol", symbol);
+    return request<JournalTradeList>(`/api/journal/trades?${search}`);
+  },
+  importJournal: (filePath: string, filename?: string) =>
+    request<{ status: string; format: string; import_id: string; records: number; inserted: number; duplicates: number }>(
+      "/api/journal/import",
+      { method: "POST", body: JSON.stringify({ file_path: filePath, filename }) },
+    ),
+  deleteJournalImport: (importId: string) =>
+    request<{ status: string; trades: number; imports: number }>(
+      `/api/journal/imports/${encodeURIComponent(importId)}`,
+      { method: "DELETE" },
+    ),
+  getMarketOhlc: (
+    symbol: string,
+    params: { start?: string; end?: string; interval?: string; maxBars?: number } = {},
+    signal?: AbortSignal,
+  ) => {
+    const search = new URLSearchParams({ symbol });
+    if (params.start) search.set("start", params.start);
+    if (params.end) search.set("end", params.end);
+    if (params.interval) search.set("interval", params.interval);
+    if (params.maxBars) search.set("max_bars", String(params.maxBars));
+    return request<MarketOhlcResponse>(`/api/market/ohlc?${search}`, { signal });
+  },
   getPortfolio: () => request<{ status: string; snapshot: PortfolioSnapshot | null }>("/api/portfolio"),
   getPortfolioAnalysisContext: (snapshotId: string) =>
     request<{ status: string; context: Record<string, unknown> }>(`/api/portfolio/analysis-context?snapshot_id=${encodeURIComponent(snapshotId)}`),

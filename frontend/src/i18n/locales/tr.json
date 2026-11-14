@@ -54,7 +54,9 @@
     "pixelOffice": "Piksel Ofis",
     "paperTrading": "Sanal işlem",
     "researchArtifacts": "Araştırma çıktıları",
-    "researchLab": "Araştırma laboratuvarı"
+    "researchLab": "Araştırma laboratuvarı",
+    "market": "Piyasa",
+    "journal": "İşlem incelemesi"
   },
   "researchArtifacts": {
     "compareTitle": "Revizyon karşılaştırması",
@@ -2451,7 +2453,9 @@
       "pixelOffice": "Araştırma görevlerini planlayın ve atayın. Atama yürütmeyi başlatmaz; rütbeler yalnızca etikettir ve işlem yetkisi vermez.",
       "paperTrading": "Günlük işlemleri sanal fonlarla deneyin. Aracı kuruma emir gönderilmez. Sonuçlar nakit temettüleri içermez ve toplam getiriyi göstermez.",
       "researchArtifacts": "Kanıta dayalı analizleri oturumlar arasında kaydedin ve yeniden kullanın.",
-      "researchLab": "Maliyetleri, sabitlenmiş örneklem dışı parametreleri, faktör tanımlarını ve kaydedilmiş kanıtları sınayın."
+      "researchLab": "Maliyetleri, sabitlenmiş örneklem dışı parametreleri, faktör tanımlarını ve kaydedilmiş kanıtları sınayın.",
+      "market": "Bir stratejiye karar vermeden önce herhangi bir enstrümanın mumlarını inceleyin.",
+      "journal": "Kendi gerçekleşmelerinizi, kâr/zararınızı ve davranış yanlılıklarınızı inceleyin."
     },
     "instructions": {
       "reports": "Önce araştırma asistanından bir stratejiyi geriye dönük test etmesini isteyin, ardından sonuçları burada açın. PDF ve diğer sohbet belgelerini özgün konuşmadan indirin.",
@@ -2465,7 +2469,9 @@
       "pixelOffice": "Araştırma görevlerini planlayın ve atayın. Atama yürütmeyi başlatmaz; rütbeler yalnızca etikettir ve işlem yetkisi vermez.",
       "paperTrading": "Yalnızca tamamlanmış günlük mumlar işlenir. Stratejiler önceki günleri okur ve işlem gününün kapanışında gerçekleşir. Normal kapanıştan 30 dakika sonrasını bekleyin; otomatik çalıştırma planlanmaz.",
       "researchArtifacts": "Önceki analizleri arayın, herhangi bir revizyonu açın veya yeni kanıtla bağlantılı revizyon oluşturun. Eski sonuçlar değişmez.",
-      "researchLab": "Maliyetleri, sabitlenmiş örneklem dışı parametreleri, faktör tanımlarını ve kaydedilmiş kanıtları sınayın."
+      "researchLab": "Maliyetleri, sabitlenmiş örneklem dışı parametreleri, faktör tanımlarını ve kaydedilmiş kanıtları sınayın.",
+      "market": "Borsa sonekiyle bir sembol yazın, ardından aralık ve periyot seçin. Katmanlar, paneller ve yakınlaştırma grafik kontrolleridir; bu sayfa hiçbir veri yazmaz.",
+      "journal": "Aracı kurum ekstresini içe aktarın, ardından bir sembol açarak kendi işlemlerinizi grafikte görün. Burada emir gönderilmez."
     }
   },
   "analysis": {
@@ -2774,5 +2780,75 @@
     "rolling": "Kayan",
     "expanding": "Genişleyen",
     "invalidChoices": "Her seçenek için bir değer girin."
+  },
+  "market": {
+    "title": "Piyasa ve mum grafiği",
+    "subtitle": "Hareketli ortalamalar, hacim ve momentum panelleriyle günlük, haftalık ve aylık OHLCV.",
+    "symbol": "Sembol",
+    "symbolPlaceholder": "örn. 000001.SZ",
+    "load": "Yükle",
+    "range": "Aralık",
+    "interval": "Periyot",
+    "interval_1D": "Günlük",
+    "interval_1W": "Haftalık",
+    "interval_1M": "Aylık",
+    "source": "Kaynak",
+    "caliber": "Fiyat esası",
+    "bars": "mum",
+    "empty": "Bu sembol ve aralık için mum dönmedi.",
+    "error": "Piyasa verileri yüklenemedi.",
+    "hint": "A hissesi kodları borsa soneki gerektirir (.SH / .SZ / .BJ). Grafikler ve geri testler aynı yükleyicileri kullanır; burada grafiği görünen sembol geri test de edilebilir."
+  },
+  "journal": {
+    "title": "İşlem incelemesi",
+    "subtitle": "Aracı kurum ekstrelerinizi içe aktarın ve gerçekte nasıl işlem yaptığınızı görün.",
+    "importBtn": "Ekstre içe aktar",
+    "importing": "İçe aktarılıyor…",
+    "formats": "招商证券 / 华泰 / 中信 / 同花顺 / 东方财富 CSV ve Excel dışa aktarımlarını destekler. Çakışan bir ayı yeniden aktarmak yalnızca yeni gerçekleşmeleri ekler.",
+    "empty": "Henüz işlem aktarılmadı",
+    "emptyHint": "Aracı kurum uygulamasından «交割单 / 对账单» dosyasını CSV veya Excel olarak dışa aktarın ve burada içe aktarın. Veriler bu cihazda kalır.",
+    "importOk": "{{inserted}} işlem aktarıldı, {{duplicates}} yinelenen atlandı",
+    "importFailed": "İçe aktarma başarısız",
+    "loadFailed": "Geçmiş yüklenemedi",
+    "deleteFailed": "Aktarım silinemedi",
+    "delete": "Bu aktarımı sil",
+    "trades": "işlem",
+    "symbols": "sembol",
+    "duplicates": "yinelenen",
+    "totalPnl": "Gerçekleşen kâr/zarar",
+    "winRate": "Kazanma oranı",
+    "pnlRatio": "Kâr/zarar oranı",
+    "avgHold": "Ortalama tutma",
+    "frequency": "Haftalık işlem",
+    "maxDrawdown": "En büyük düşüş",
+    "days": "g",
+    "week": "hafta",
+    "behavior": "Davranış teşhisi",
+    "disposition_effect": "Elden çıkarma etkisi",
+    "overtrading": "Aşırı işlem",
+    "chasing_momentum": "Momenti kovalama",
+    "anchoring": "Çapalama",
+    "severity_low": "düşük",
+    "severity_medium": "orta",
+    "severity_high": "yüksek",
+    "monthly": "Aylık gerçekleşen kâr/zarar",
+    "topSymbols": "En çok işlem gören semboller",
+    "ledger": "İşlem defteri",
+    "colTime": "Zaman",
+    "colSymbol": "Sembol",
+    "colSide": "Yön",
+    "colQty": "Miktar",
+    "colPrice": "Fiyat",
+    "colAmount": "Tutar",
+    "colFee": "Komisyon",
+    "side_buy": "Alış",
+    "side_sell": "Satış",
+    "side_dividend": "Temettü",
+    "imports": "Aktarılan dosyalar",
+    "chartTitle": "{{symbol}} ve kendi işlemlerim",
+    "chartHint": "B/S işaretleri kendi işlemlerinizdir",
+    "hideChart": "Grafiği kapat",
+    "chartEmpty": "Bu sembol için grafik verisi yok",
+    "chartFailed": "Grafik yüklenemedi"
   }
 }

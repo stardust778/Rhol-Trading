@@ -33,6 +33,8 @@ const Portfolio = lazy(() =>
 const Correlation = lazy(() =>
   import("@/pages/Correlation").then((m) => ({ default: m.Correlation })),
 );
+const Market = lazy(() => import("@/pages/Market").then((m) => ({ default: m.Market })));
+const Journal = lazy(() => import("@/pages/Journal").then((m) => ({ default: m.Journal })));
 const AlphaZoo = lazy(() =>
   import("@/pages/AlphaZoo").then((m) => ({ default: m.AlphaZoo })),
 );
@@ -78,6 +80,8 @@ export const router = createBrowserRouter([
       { path: "/runs/:runId", element: wrap(RunDetail) },
       { path: "/compare", element: wrap(Compare) },
       { path: "/correlation", element: wrap(Correlation) },
+      { path: "/market", element: wrap(Market) },
+      { path: "/journal", element: wrap(Journal) },
       { path: "/options", element: wrap(OptionsLab) },
       { path: "/alpha-zoo", element: wrap(AlphaZoo) },
       { path: "/alpha-zoo/bench", element: wrap(AlphaZoo) },

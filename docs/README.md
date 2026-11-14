@@ -61,7 +61,7 @@
 | LLM provider | ✅ `deepseek-v4-flash`（`~/.vibe-trading/.env`），**key 待填** |
 
 ```bash
-cd /Users/lirihao/Vibe-Trading && source .venv/bin/activate
+cd /Users/lirihao/Rhol-Trading && source .venv/bin/activate
 
 python -m pytest agent/tests/test_base_engine.py -q        # 冒烟，104 passed
 # 填 key：编辑 ~/.vibe-trading/.env 的 DEEPSEEK_API_KEY=（或 Web → Settings → LLM）
@@ -78,15 +78,21 @@ PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run dev
 ### 已验证的能力边界
 
 - ✅ A 股日线：`resolve_loader("a_share")` 默认走 tencent，实测取到 `000001.SZ` 18 根日线
+- ✅ 行情 K 线页：`GET /api/market/ohlc` + 前端 `/market`，与回测共用 loader / 复权口径
+- ✅ 交割单复盘：中文通用解析器（招商风格）+ `/api/journal/*` + 前端 `/journal`，成交落 SQLite 去重
 - ✅ 回测引擎：104 个单测通过；因子门 + loader 契约 + run_card：973 passed / 23 skipped
 - ⚠️ **Yahoo/yfinance 在你的网络下不可达**（预检会重试约 1 分钟才继续）→ 优先用 A 股数据源
 - ⚠️ 服务端启动会做网络预检，首次启动约需 60–90 秒
 
 ### 本地改动（相对上游 HEAD）
 
+- 新增 `agent/src/api/market_routes.py`（`GET /api/market/ohlc`）与 `frontend/src/pages/Market.tsx`（`/market`）。
+- 新增 `agent/src/api/journal_routes.py`、`agent/src/journal/{store,analysis}.py` 与 `frontend/src/pages/Journal.tsx`（`/journal`）；
+  `trade_journal_parsers.py` 增加中文通用交割单/对账单解析器 `cn_broker`，并让 CSV 加载器跳过券商导出前置的标题行。
 - `frontend/src/components/options/PayoffComparisons.tsx`：3 处动态 i18n key 加 `as never`。
   上游 commit `d3f79ae4` 引入的类型错误会让 `npm run build` 失败（`npm run dev` 不受影响）。
   这是可提 upstream 的小 bug。
+- 项目目录从 `Vibe-Trading` 改名为 `Rhol-Trading`：`.venv` 里的绝对路径（activate / console script / editable `.pth`，共 62 个文件）已改到新路径。
 
 ## 用户场景
 

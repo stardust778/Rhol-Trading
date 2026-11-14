@@ -46,7 +46,9 @@
       "pixelOffice": "Planifica y asigna tareas de investigación. La asignación no inicia la ejecución; los rangos son etiquetas y no conceden permisos de negociación.",
       "paperTrading": "Prueba operaciones diarias con fondos ficticios. No se envían órdenes al bróker. Los resultados excluyen dividendos en efectivo y no representan la rentabilidad total.",
       "researchArtifacts": "Guarda y reutiliza análisis respaldados por evidencia entre sesiones.",
-      "researchLab": "Compruebe costes, parámetros fijados fuera de muestra, fórmulas de factores y evidencias guardadas."
+      "researchLab": "Compruebe costes, parámetros fijados fuera de muestra, fórmulas de factores y evidencias guardadas.",
+      "market": "Revisa las velas de cualquier instrumento antes de decidir una estrategia.",
+      "journal": "Revisa tus ejecuciones, tu P&L y tus sesgos de conducta."
     },
     "instructions": {
       "reports": "Primero pide al asistente un backtest de una estrategia y abre aquí sus resultados. Descarga los PDF y documentos generados en el chat desde la conversación original.",
@@ -60,7 +62,9 @@
       "pixelOffice": "Planifica y asigna tareas de investigación. La asignación no inicia la ejecución; los rangos son etiquetas y no conceden permisos de negociación.",
       "paperTrading": "Solo se liquidan velas diarias completas. Las estrategias leen días anteriores y ejecutan al cierre del día indicado. Espera 30 minutos tras el cierre habitual; no se programa ejecución automática.",
       "researchArtifacts": "Busca análisis anteriores, abre cualquier revisión o crea una revisión vinculada con nueva evidencia. Las conclusiones anteriores no cambian.",
-      "researchLab": "Compruebe costes, parámetros fijados fuera de muestra, fórmulas de factores y evidencias guardadas."
+      "researchLab": "Compruebe costes, parámetros fijados fuera de muestra, fórmulas de factores y evidencias guardadas.",
+      "market": "Escribe un símbolo con su sufijo de bolsa y elige rango e intervalo. Las superposiciones, los paneles y el zoom son controles del gráfico; esta página no escribe datos.",
+      "journal": "Importa un extracto y abre un símbolo para ver tus operaciones marcadas en el gráfico. Aquí no se envía ninguna orden."
     }
   },
   "layout": {
@@ -94,7 +98,9 @@
     "pixelOffice": "Oficina de píxeles",
     "paperTrading": "Trading simulado",
     "researchArtifacts": "Artefactos de investigación",
-    "researchLab": "Laboratorio de investigación"
+    "researchLab": "Laboratorio de investigación",
+    "market": "Mercado",
+    "journal": "Revisión de operaciones"
   },
   "researchArtifacts": {
     "compareTitle": "Comparación de revisiones",
@@ -2774,5 +2780,75 @@
     "rolling": "Móvil",
     "expanding": "Expansiva",
     "invalidChoices": "Introduce un valor para cada opción."
+  },
+  "market": {
+    "title": "Mercado y velas",
+    "subtitle": "OHLCV diario, semanal y mensual con medias móviles, volumen y paneles de impulso.",
+    "symbol": "Símbolo",
+    "symbolPlaceholder": "p. ej. 000001.SZ",
+    "load": "Cargar",
+    "range": "Rango",
+    "interval": "Intervalo",
+    "interval_1D": "Diario",
+    "interval_1W": "Semanal",
+    "interval_1M": "Mensual",
+    "source": "Fuente",
+    "caliber": "Criterio de precio",
+    "bars": "velas",
+    "empty": "No hay velas para este símbolo y rango.",
+    "error": "No se pudieron cargar los datos de mercado.",
+    "hint": "Los códigos de acciones A necesitan sufijo de bolsa (.SH / .SZ / .BJ). Los gráficos y los backtests comparten los mismos cargadores, así que un símbolo que se grafica aquí también se puede probar."
+  },
+  "journal": {
+    "title": "Revisión de operaciones",
+    "subtitle": "Importa tus extractos del bróker y revisa cómo operas de verdad.",
+    "importBtn": "Importar extracto",
+    "importing": "Importando…",
+    "formats": "Compatible con exportaciones CSV y Excel de 招商证券 / 华泰 / 中信 / 同花顺 / 东方财富. Reimportar un mes solapado solo añade las operaciones nuevas.",
+    "empty": "Aún no hay operaciones importadas",
+    "emptyHint": "Exporta un «交割单 / 对账单» desde la app de tu bróker (CSV o Excel) e impórtalo aquí. Todo se queda en este equipo.",
+    "importOk": "{{inserted}} operaciones importadas, {{duplicates}} duplicadas omitidas",
+    "importFailed": "La importación falló",
+    "loadFailed": "No se pudo cargar el historial",
+    "deleteFailed": "No se pudo borrar la importación",
+    "delete": "Borrar esta importación",
+    "trades": "operaciones",
+    "symbols": "símbolos",
+    "duplicates": "duplicadas",
+    "totalPnl": "P&L realizado",
+    "winRate": "Tasa de acierto",
+    "pnlRatio": "Ratio ganancia/pérdida",
+    "avgHold": "Mantenimiento medio",
+    "frequency": "Operaciones/semana",
+    "maxDrawdown": "Caída máxima",
+    "days": "d",
+    "week": "semana",
+    "behavior": "Diagnóstico de conducta",
+    "disposition_effect": "Efecto disposición",
+    "overtrading": "Sobreoperación",
+    "chasing_momentum": "Perseguir el impulso",
+    "anchoring": "Anclaje",
+    "severity_low": "bajo",
+    "severity_medium": "medio",
+    "severity_high": "alto",
+    "monthly": "P&L realizado mensual",
+    "topSymbols": "Símbolos más operados",
+    "ledger": "Registro de operaciones",
+    "colTime": "Hora",
+    "colSymbol": "Símbolo",
+    "colSide": "Lado",
+    "colQty": "Cantidad",
+    "colPrice": "Precio",
+    "colAmount": "Importe",
+    "colFee": "Comisión",
+    "side_buy": "Compra",
+    "side_sell": "Venta",
+    "side_dividend": "Dividendo",
+    "imports": "Archivos importados",
+    "chartTitle": "{{symbol}} con mis operaciones",
+    "chartHint": "Las marcas B/S son tus propias operaciones",
+    "hideChart": "Cerrar gráfico",
+    "chartEmpty": "Sin datos de gráfico para este símbolo",
+    "chartFailed": "No se pudo cargar el gráfico"
   }
 }

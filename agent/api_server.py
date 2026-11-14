@@ -217,6 +217,14 @@ from src.api.sessions_routes import (  # noqa: F401, E402
     _mandate_proposal_frame_from_tool_result,
 )
 
+# --- Market data (K-line chart page) ---
+from src.api.market_routes import register_market_routes  # noqa: E402
+register_market_routes(app)
+
+# --- Trade journal (交割单 review page) ---
+from src.api.journal_routes import register_journal_routes  # noqa: E402
+register_journal_routes(app)
+
 # --- System ---
 from src.api.system_routes import register_system_routes  # noqa: E402
 register_system_routes(app)

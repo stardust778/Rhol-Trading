@@ -46,7 +46,9 @@
       "pixelOffice": "Plane und verteile Rechercheaufgaben. Eine Zuweisung startet keine Ausführung. Ränge sind Bezeichnungen und erteilen keine Handelsrechte.",
       "paperTrading": "Tägliche Trades mit virtuellem Kapital testen. Es werden keine Brokeraufträge gesendet. Bardividenden sind nicht enthalten; die Ergebnisse zeigen keine Gesamtrendite.",
       "researchArtifacts": "Beleggestützte Analysen sitzungsübergreifend speichern und wiederverwenden.",
-      "researchLab": "Prüfen Sie Kosten, fixierte Parameter außerhalb der Stichprobe, Faktordefinitionen und gespeicherte Belege."
+      "researchLab": "Prüfen Sie Kosten, fixierte Parameter außerhalb der Stichprobe, Faktordefinitionen und gespeicherte Belege.",
+      "market": "Prüfe die Kerzen jedes Instruments, bevor du dich auf eine Strategie festlegst.",
+      "journal": "Prüfe eigene Ausführungen, G&V und Verhaltensverzerrungen."
     },
     "instructions": {
       "reports": "Bitte den Assistenten zuerst um einen Strategie-Backtest und öffne hier die Ergebnisse. Im Chat erstellte PDFs und andere Dokumente lädst du in der ursprünglichen Unterhaltung herunter.",
@@ -60,7 +62,9 @@
       "pixelOffice": "Plane und verteile Rechercheaufgaben. Eine Zuweisung startet keine Ausführung. Ränge sind Bezeichnungen und erteilen keine Handelsrechte.",
       "paperTrading": "Nur abgeschlossene Tageskerzen werden abgerechnet. Strategien sehen vorherige Tage und handeln zum Schlusskurs des Ausführungstags. Bitte 30 Minuten nach regulärem Börsenschluss warten; es wird keine automatische Ausführung geplant.",
       "researchArtifacts": "Frühere Analysen suchen, Revisionen öffnen oder mit neuen Belegen eine verknüpfte Revision erstellen. Ältere Schlussfolgerungen bleiben unverändert.",
-      "researchLab": "Prüfen Sie Kosten, fixierte Parameter außerhalb der Stichprobe, Faktordefinitionen und gespeicherte Belege."
+      "researchLab": "Prüfen Sie Kosten, fixierte Parameter außerhalb der Stichprobe, Faktordefinitionen und gespeicherte Belege.",
+      "market": "Gib ein Symbol mit Börsensuffix ein und wähle Zeitraum und Intervall. Overlays, Panels und Zoom sind Chart-Steuerungen; diese Seite schreibt keine Daten.",
+      "journal": "Importiere eine Broker-Abrechnung und öffne ein Symbol, um eigene Trades im Chart zu sehen. Hier wird nicht gehandelt."
     }
   },
   "layout": {
@@ -94,7 +98,9 @@
     "pixelOffice": "Pixelbüro",
     "paperTrading": "Simulierter Handel",
     "researchArtifacts": "Recherche-Artefakte",
-    "researchLab": "Forschungslabor"
+    "researchLab": "Forschungslabor",
+    "market": "Markt",
+    "journal": "Trade-Review"
   },
   "researchArtifacts": {
     "compareTitle": "Revisionsvergleich",
@@ -2774,5 +2780,75 @@
     "rolling": "Rollierend",
     "expanding": "Erweiternd",
     "invalidChoices": "Geben Sie für jede Auswahl einen Wert ein."
+  },
+  "market": {
+    "title": "Markt & Kerzenchart",
+    "subtitle": "Tages-, Wochen- und Monats-OHLCV mit gleitenden Durchschnitten, Volumen und Momentum-Panels.",
+    "symbol": "Kürzel",
+    "symbolPlaceholder": "z. B. 000001.SZ",
+    "load": "Laden",
+    "range": "Zeitraum",
+    "interval": "Intervall",
+    "interval_1D": "Täglich",
+    "interval_1W": "Wöchentlich",
+    "interval_1M": "Monatlich",
+    "source": "Quelle",
+    "caliber": "Preisbasis",
+    "bars": "Kerzen",
+    "empty": "Für dieses Kürzel und diesen Zeitraum wurden keine Kerzen geliefert.",
+    "error": "Marktdaten konnten nicht geladen werden.",
+    "hint": "A-Aktien-Kürzel benötigen ein Börsensuffix (.SH / .SZ / .BJ). Charts und Backtests nutzen dieselben Loader, daher lässt sich jedes hier dargestellte Kürzel auch backtesten."
+  },
+  "journal": {
+    "title": "Trade-Review",
+    "subtitle": "Importiere deine Broker-Abrechnungen und prüfe, wie du wirklich handelst.",
+    "importBtn": "Abrechnung importieren",
+    "importing": "Importiere…",
+    "formats": "Unterstützt CSV- und Excel-Exporte von 招商证券 / 华泰 / 中信 / 同花顺 / 东方财富. Ein erneuter Import eines überlappenden Monats ergänzt nur neue Ausführungen.",
+    "empty": "Noch keine Ausführungen importiert",
+    "emptyHint": "Exportiere ein «交割单 / 对账单» aus deiner Broker-App (CSV oder Excel) und importiere es hier. Alles bleibt auf diesem Rechner.",
+    "importOk": "{{inserted}} Ausführungen importiert, {{duplicates}} Duplikate übersprungen",
+    "importFailed": "Import fehlgeschlagen",
+    "loadFailed": "Verlauf konnte nicht geladen werden",
+    "deleteFailed": "Import konnte nicht gelöscht werden",
+    "delete": "Diesen Import löschen",
+    "trades": "Ausführungen",
+    "symbols": "Symbole",
+    "duplicates": "Duplikate",
+    "totalPnl": "Realisierter G&V",
+    "winRate": "Trefferquote",
+    "pnlRatio": "Gewinn/Verlust-Verhältnis",
+    "avgHold": "Ø Haltedauer",
+    "frequency": "Trades/Woche",
+    "maxDrawdown": "Max. Drawdown",
+    "days": "T",
+    "week": "Woche",
+    "behavior": "Verhaltensdiagnose",
+    "disposition_effect": "Dispositionseffekt",
+    "overtrading": "Überhandeln",
+    "chasing_momentum": "Momentum-Jagd",
+    "anchoring": "Verankerung",
+    "severity_low": "niedrig",
+    "severity_medium": "mittel",
+    "severity_high": "hoch",
+    "monthly": "Realisierter G&V pro Monat",
+    "topSymbols": "Meistgehandelte Symbole",
+    "ledger": "Ausführungsjournal",
+    "colTime": "Zeit",
+    "colSymbol": "Symbol",
+    "colSide": "Seite",
+    "colQty": "Stück",
+    "colPrice": "Preis",
+    "colAmount": "Betrag",
+    "colFee": "Gebühr",
+    "side_buy": "Kauf",
+    "side_sell": "Verkauf",
+    "side_dividend": "Dividende",
+    "imports": "Importierte Dateien",
+    "chartTitle": "{{symbol}} mit meinen Ausführungen",
+    "chartHint": "B/S-Marken sind deine eigenen Trades",
+    "hideChart": "Chart schließen",
+    "chartEmpty": "Keine Chartdaten für dieses Symbol",
+    "chartFailed": "Chart konnte nicht geladen werden"
   }
 }

@@ -46,7 +46,9 @@
       "settings": "Configure models, data sources, and broker connections.",
       "pixelOffice": "Plan and assign research tasks. Assignment does not start execution; ranks are labels and grant no trading permissions.",
       "paperTrading": "Test daily trades with simulated funds. No broker orders are sent. Results exclude cash dividends and are not a total-return record.",
-      "researchLab": "Test trading costs, frozen out-of-sample parameters, factor definitions and saved research evidence."
+      "researchLab": "Test trading costs, frozen out-of-sample parameters, factor definitions and saved research evidence.",
+      "market": "Inspect any instrument's candlesticks before committing to a strategy.",
+      "journal": "Review your own fills, PnL and behaviour biases."
     },
     "instructions": {
       "reports": "Ask the research assistant to backtest a strategy first, then open its results here. Download PDFs and other chat-generated documents from the original conversation.",
@@ -60,7 +62,9 @@
       "settings": "Configure a model to start. Add data sources or broker connections as your task needs them; public-market research does not require a broker account.",
       "pixelOffice": "Plan and assign research tasks. Assignment does not start execution; ranks are labels and grant no trading permissions.",
       "paperTrading": "Only completed daily bars can settle. Strategies see prior days only and fill at the execution day’s close. Wait until 30 minutes after the regular market close; no background execution is scheduled.",
-      "researchLab": "Test trading costs, frozen out-of-sample parameters, factor definitions and saved research evidence."
+      "researchLab": "Test trading costs, frozen out-of-sample parameters, factor definitions and saved research evidence.",
+      "market": "Type a symbol with its exchange suffix, then pick a range and interval. Overlays, sub-panels and zoom are chart controls; nothing on this page writes data.",
+      "journal": "Import a broker statement, then open a symbol to see your own trades marked on its chart. Nothing here is live trading."
     }
   },
   "layout": {
@@ -94,7 +98,9 @@
     "sessionsLoadFailed": "Cannot load conversations.",
     "pixelOffice": "Pixel Office",
     "paperTrading": "Paper trading",
-    "researchLab": "Research Lab"
+    "researchLab": "Research Lab",
+    "market": "Market",
+    "journal": "Trade journal"
   },
   "researchArtifacts": {
     "compareTitle": "Revision comparison",
@@ -2774,5 +2780,75 @@
     "rolling": "Rolling",
     "expanding": "Expanding",
     "invalidChoices": "Enter a value for every choice."
+  },
+  "market": {
+    "title": "Market & K-line",
+    "subtitle": "Daily, weekly and monthly OHLCV with moving averages, volume and momentum panels.",
+    "symbol": "Symbol",
+    "symbolPlaceholder": "e.g. 000001.SZ",
+    "load": "Load",
+    "range": "Range",
+    "interval": "Interval",
+    "interval_1D": "Daily",
+    "interval_1W": "Weekly",
+    "interval_1M": "Monthly",
+    "source": "Source",
+    "caliber": "Price caliber",
+    "bars": "bars",
+    "empty": "No bars returned for this symbol and range.",
+    "error": "Failed to load market data.",
+    "hint": "A-share codes need an exchange suffix (.SH / .SZ / .BJ). Charts and backtests share the same loaders, so a symbol that charts here can also be backtested."
+  },
+  "journal": {
+    "title": "Trade journal",
+    "subtitle": "Import your broker statements and review how you actually trade.",
+    "importBtn": "Import statement",
+    "importing": "Importing…",
+    "formats": "Supports 招商证券 / 华泰 / 中信 / 同花顺 / 东方财富 CSV & Excel exports. Re-importing an overlapping month only adds new fills.",
+    "empty": "No trades imported yet",
+    "emptyHint": "Export a 交割单 or 对账单 from your broker (CSV or Excel) and import it here. Everything stays on this machine.",
+    "importOk": "Imported {{inserted}} fills, skipped {{duplicates}} duplicates",
+    "importFailed": "Import failed",
+    "loadFailed": "Could not load the journal",
+    "deleteFailed": "Could not delete the import",
+    "delete": "Delete import",
+    "trades": "fills",
+    "symbols": "symbols",
+    "duplicates": "duplicates",
+    "totalPnl": "Realised P&L",
+    "winRate": "Win rate",
+    "pnlRatio": "Profit/loss ratio",
+    "avgHold": "Avg holding",
+    "frequency": "Trades / week",
+    "maxDrawdown": "Max drawdown",
+    "days": "d",
+    "week": "week",
+    "behavior": "Behaviour diagnostics",
+    "disposition_effect": "Disposition effect",
+    "overtrading": "Overtrading",
+    "chasing_momentum": "Chasing momentum",
+    "anchoring": "Anchoring",
+    "severity_low": "low",
+    "severity_medium": "medium",
+    "severity_high": "high",
+    "monthly": "Monthly realised P&L",
+    "topSymbols": "Most traded symbols",
+    "ledger": "Trade ledger",
+    "colTime": "Time",
+    "colSymbol": "Symbol",
+    "colSide": "Side",
+    "colQty": "Qty",
+    "colPrice": "Price",
+    "colAmount": "Amount",
+    "colFee": "Fee",
+    "side_buy": "Buy",
+    "side_sell": "Sell",
+    "side_dividend": "Dividend",
+    "imports": "Imported files",
+    "chartTitle": "{{symbol}} with your fills",
+    "chartHint": "B/S marks are your own trades",
+    "hideChart": "Close chart",
+    "chartEmpty": "No chart data for this symbol",
+    "chartFailed": "Could not load the chart"
   }
 }

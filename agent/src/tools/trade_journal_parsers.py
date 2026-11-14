@@ -9,6 +9,7 @@ Excel (.xlsx/.xls) always opens as utf-8 internally via openpyxl/xlrd.
 
 from __future__ import annotations
 
+import io
 import re
 import math
 from dataclasses import asdict, dataclass
@@ -27,7 +28,7 @@ _CURRENCY_TOKEN_RE = re.compile(
 )
 
 
-FormatName = str  # "tonghuashun" | "eastmoney" | "futu" | "generic" | "unknown"
+FormatName = str  # "tonghuashun" | "eastmoney" | "cn_broker" | "futu" | "generic" | "unknown"
 
 _A_SHARE_EXCHANGE_MAP = {
     # prefix → suffix; Shanghai Main + STAR, Shenzhen Main + SME + ChiNext, BSE
@@ -89,6 +90,12 @@ _SKIP_SIDE_TOKENS = {
     "配股上市",
     "利息归本",
     "利息",
+    "银行转证券",
+    "证券转银行",
+    "银证转账",
+    "资金转入",
+    "资金转出",
+    "银行转账",
     "stock dividend",
     "bonus issue",
     "stock split",
@@ -130,11 +137,16 @@ class TradeRecord:
 def load_dataframe(path: str | Path) -> pd.DataFrame:
     """Load a CSV/Excel file into a DataFrame with encoding fallback.
 
+    Broker exports frequently carry a title / account block above the real
+    table, so CSV files are read as text first, the header row is located by
+    its own headings, and only the table below it is parsed. Ragged preamble
+    lines therefore cannot raise a tokenizer error.
+
     Args:
         path: Path to the file (.csv/.xlsx/.xls).
 
     Returns:
-        Parsed DataFrame with raw column names (no normalization).
+        Parsed DataFrame with stripped column names.
 
     Raises:
         FileNotFoundError: File does not exist.
@@ -146,7 +158,7 @@ def load_dataframe(path: str | Path) -> pd.DataFrame:
 
     ext = p.suffix.lower()
     if ext in {".xlsx", ".xls"}:
-        return pd.read_excel(p, dtype=str)
+        return _promote_header_row(pd.read_excel(p, dtype=str, header=None))
     if ext != ".csv":
         raise ValueError(f"Unsupported extension: {ext}")
 
@@ -154,10 +166,82 @@ def load_dataframe(path: str | Path) -> pd.DataFrame:
     # utf-16 covers Excel "CSV UTF-16" / Unicode exports (BOM required).
     for enc in ("utf-8-sig", "utf-8", "utf-16", "gbk", "gb2312"):
         try:
-            return pd.read_csv(p, dtype=str, encoding=enc)
+            text = p.read_text(encoding=enc)
         except UnicodeDecodeError as exc:
             last_err = exc
+            continue
+        header_index, delimiter = _locate_csv_header(text)
+        frame = pd.read_csv(
+            io.StringIO(text),
+            dtype=str,
+            header=header_index,
+            sep=delimiter,
+            on_bad_lines="skip",
+        )
+        frame.columns = [str(col).strip() for col in frame.columns]
+        return frame
     raise ValueError(f"Failed to decode CSV with utf-8/utf-16/gbk/gb2312: {last_err}")
+
+
+# Broker exports often start with a title / account block above the real table.
+# Reading those rows as the header turns every later column lookup into a miss,
+# so the loader locates the first row that looks like a header instead.
+_HEADER_TOKENS = {
+    "datetime", "time", "date", "symbol", "ticker", "code", "side", "direction",
+    "action", "name", "instrument", "quantity", "qty", "size", "volume", "price",
+    "amount", "value", "notional", "fee", "commission", "fees",
+    "成交日期", "发生日期", "交易日期", "委托日期", "日期", "成交时间", "发生时间",
+    "交易时间", "证券代码", "股票代码", "代码", "证券名称", "股票名称", "名称",
+    "买卖标志", "买卖方向", "操作", "业务名称", "摘要", "交易类型", "成交数量",
+    "发生数量", "成交股数", "股数", "数量", "成交价格", "成交均价", "成交价",
+    "价格", "委托价格", "成交金额", "发生金额", "成交额", "金额", "资金发生额",
+    "佣金", "手续费", "净佣金", "交易佣金", "经纪费", "印花税", "过户费",
+    "其他费", "附加费", "结算费", "规费", "经手费", "证管费",
+    "Date", "Symbol", "Side", "Direction", "Quantity", "Amount", "Price",
+}
+
+
+def _sniff_delimiter(line: str) -> str:
+    """Pick the separator a header line is most likely using."""
+    counts = {",": line.count(","), "\t": line.count("\t"), ";": line.count(";")}
+    best = max(counts, key=counts.get)
+    return best if counts[best] > 0 else ","
+
+
+def _locate_csv_header(text: str, scan_lines: int = 50) -> tuple[int, str]:
+    """Return (0-based header row index, delimiter) for a broker CSV export."""
+    lines = text.splitlines()
+    for index, line in enumerate(lines[:scan_lines]):
+        if not line.strip():
+            continue
+        delimiter = _sniff_delimiter(line)
+        cells = {cell.strip().strip('"').strip() for cell in line.split(delimiter)}
+        if len(cells & _HEADER_TOKENS) >= 2:
+            return index, delimiter
+    return 0, _sniff_delimiter(lines[0]) if lines else ","
+
+
+def _promote_header_row(frame: pd.DataFrame, scan_rows: int = 15) -> pd.DataFrame:
+    """Rebuild an Excel frame whose real header sits below a title preamble.
+
+    Args:
+        frame: Raw header-less frame (``header=None`` read).
+        scan_rows: How many leading rows to inspect.
+
+    Returns:
+        Frame with the detected header promoted; the input frame unchanged
+        when it already carries recognizable column names.
+    """
+    if frame.empty:
+        return frame
+    for index in range(min(scan_rows, len(frame))):
+        cells = {str(value).strip() for value in frame.iloc[index].tolist() if pd.notna(value)}
+        if len(cells & _HEADER_TOKENS) >= 2:
+            header = [str(value).strip() for value in frame.iloc[index].tolist()]
+            body = frame.iloc[index + 1:].copy()
+            body.columns = header
+            return body.reset_index(drop=True)
+    return frame
 
 
 # ---------------- Format detection ----------------
@@ -186,6 +270,8 @@ def detect_format(df: pd.DataFrame) -> FormatName:
         return "tonghuashun"
     if {"买卖标志", "股票代码"}.issubset(cols) or {"买卖标志", "成交均价"}.issubset(cols):
         return "eastmoney"
+    if (cols & set(_CN_BROKER_CODE_COLUMNS)) and (cols & set(_CN_BROKER_SIDE_COLUMNS)):
+        return "cn_broker"
     if (
         {"Date", "Symbol"}.issubset(cols)
         and cols.intersection(_FUTU_SIDE_COLUMNS)
@@ -454,6 +540,142 @@ def parse_eastmoney(df: pd.DataFrame) -> list[TradeRecord]:
             amount=amount,
             fee=fee,
             market="china_a",
+        ))
+    return records
+
+
+# ---------------- Chinese broker statement (交割单 / 对账单) ----------------
+
+# Column aliases seen across mainland brokers (招商, 华泰, 中信, 国金, 广发, …).
+# Brokers rename these freely and the file often carries a title row, so the
+# parser resolves each semantic field by alias instead of exact position.
+_CN_BROKER_COLUMNS: dict[str, tuple[str, ...]] = {
+    "date": ("成交日期", "发生日期", "交易日期", "委托日期", "日期"),
+    "time": ("成交时间", "发生时间", "交易时间"),
+    "code": ("证券代码", "股票代码", "代码"),
+    "name": ("证券名称", "股票名称", "名称"),
+    "side": ("买卖标志", "买卖方向", "操作", "业务名称", "摘要", "交易类型"),
+    "qty": ("成交数量", "发生数量", "成交股数", "股数", "数量"),
+    "price": ("成交价格", "成交均价", "成交价", "价格", "委托价格"),
+    "amount": ("成交金额", "发生金额", "成交额", "金额", "资金发生额"),
+    "fee_commission": ("佣金", "手续费", "净佣金", "交易佣金", "经纪费"),
+    "fee_stamp": ("印花税", "印花税费"),
+    "fee_transfer": ("过户费", "过户税费"),
+    "fee_extra": ("其他费", "附加费", "结算费", "规费", "经手费", "证管费"),
+}
+_CN_BROKER_CODE_COLUMNS = _CN_BROKER_COLUMNS["code"]
+_CN_BROKER_SIDE_COLUMNS = _CN_BROKER_COLUMNS["side"]
+
+
+def _cn_broker_pick(columns: dict[str, Any], field: str) -> Any | None:
+    """Return the DataFrame column matching any alias of ``field``."""
+    for alias in _CN_BROKER_COLUMNS[field]:
+        if alias in columns:
+            return columns[alias]
+    return None
+
+
+def _cn_broker_date(raw: Any) -> str:
+    """Normalize 20261009 / 2026-10-09 / Excel serial to an ISO datetime."""
+    if raw is None:
+        return ""
+    text = str(raw).strip()
+    if len(text) == 8 and text.isdigit():
+        text = f"{text[:4]}-{text[4:6]}-{text[6:]}"
+    return _generic_datetime_cell(text)
+
+
+def parse_cn_broker(df: pd.DataFrame) -> list[TradeRecord]:
+    """Parse a mainland Chinese broker statement (交割单 / 对账单).
+
+    Handles 招商证券-style exports and the many equivalents that share the
+    same Chinese headings but spell a few of them differently (成交价格 vs
+    成交均价, 佣金 vs 手续费, 业务名称 vs 买卖标志). Rows whose direction is
+    neither a fill nor a dividend (bank transfers, interest, rights issues)
+    are dropped instead of aborting the whole import.
+    """
+    columns = {str(col).strip(): col for col in df.columns}
+    code_col = _cn_broker_pick(columns, "code")
+    side_col = _cn_broker_pick(columns, "side")
+    if code_col is None or side_col is None:
+        raise ValueError(
+            "cn_broker journal requires a securities-code column "
+            f"(one of {_CN_BROKER_COLUMNS['code']}) and a side column "
+            f"(one of {_CN_BROKER_COLUMNS['side']})"
+        )
+
+    date_col = _cn_broker_pick(columns, "date")
+    time_col = _cn_broker_pick(columns, "time")
+    name_col = _cn_broker_pick(columns, "name")
+    qty_col = _cn_broker_pick(columns, "qty")
+    price_col = _cn_broker_pick(columns, "price")
+    amount_col = _cn_broker_pick(columns, "amount")
+    fee_cols = [
+        _cn_broker_pick(columns, field)
+        for field in ("fee_commission", "fee_stamp", "fee_transfer", "fee_extra")
+    ]
+
+    records: list[TradeRecord] = []
+    for _, row in df.iterrows():
+        raw_code = row.get(code_col, "")
+        if _is_empty_code(raw_code):
+            continue
+        raw_side = row.get(side_col)
+        if _is_skippable_side(raw_side):
+            continue
+        try:
+            side = _normalize_side(raw_side)
+        except ValueError:
+            # Cash movement / corporate action we do not model (转账, 申购…).
+            continue
+
+        if date_col is not None:
+            date_text = _cn_broker_date(row.get(date_col))
+            dt = (
+                _generic_split_datetime(date_text, row.get(time_col))
+                if time_col is not None
+                else date_text
+            )
+        elif time_col is not None:
+            # 同花顺-style exports put the full timestamp in one column.
+            dt = _generic_datetime_cell(row.get(time_col))
+        else:
+            dt = ""
+
+        code_text = str(raw_code).strip()
+        symbol = (
+            _qualify_a_share(code_text)
+            if code_text.replace(".", "").isdigit() and code_text.count(".") <= 1
+            else code_text.upper()
+        )
+        market = (
+            "china_a"
+            if symbol.endswith((".SH", ".SZ", ".BJ"))
+            else _infer_market_from_symbol(symbol)
+        )
+
+        qty = _to_float(row.get(qty_col)) if qty_col is not None else 0.0
+        price = _to_float(row.get(price_col)) if price_col is not None else 0.0
+        amount = abs(_to_float(row.get(amount_col))) if amount_col is not None else qty * price
+        if side == "dividend":
+            amount = _dividend_amount(row, amount)
+        if price <= 0 and qty > 0 and amount:
+            price = amount / qty
+        fee = sum(
+            _to_float(row.get(col))
+            for col in fee_cols
+            if col is not None
+        )
+        records.append(TradeRecord(
+            datetime=dt,
+            symbol=symbol,
+            name=str(row.get(name_col, "")).strip() if name_col is not None else "",
+            side=side,
+            quantity=qty,
+            price=price,
+            amount=amount,
+            fee=fee,
+            market=market,
         ))
     return records
 
@@ -730,6 +952,7 @@ def _infer_market_from_symbol(symbol: str) -> str:
 _PARSERS = {
     "tonghuashun": parse_tonghuashun,
     "eastmoney": parse_eastmoney,
+    "cn_broker": parse_cn_broker,
     "futu": parse_futu,
     "generic": parse_generic,
 }

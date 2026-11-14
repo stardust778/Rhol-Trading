@@ -46,7 +46,9 @@
       "pixelOffice": "Rencanakan dan tugaskan riset. Penugasan tidak memulai eksekusi; pangkat hanya label dan tidak memberikan izin transaksi.",
       "paperTrading": "Uji transaksi harian dengan dana virtual. Tidak ada pesanan yang dikirim ke broker. Hasil tidak mencakup dividen tunai dan bukan imbal hasil total.",
       "researchArtifacts": "Simpan dan gunakan kembali analisis berbasis bukti antarsesi.",
-      "researchLab": "Periksa biaya, parameter terkunci di luar sampel, rumus faktor, dan bukti tersimpan."
+      "researchLab": "Periksa biaya, parameter terkunci di luar sampel, rumus faktor, dan bukti tersimpan.",
+      "market": "Periksa candlestick instrumen apa pun sebelum memilih strategi.",
+      "journal": "Tinjau eksekusi, P&L, dan bias perilaku Anda sendiri."
     },
     "instructions": {
       "reports": "Minta asisten melakukan backtest strategi terlebih dahulu, lalu buka hasilnya di sini. Unduh PDF dan dokumen yang dibuat di chat dari percakapan asal.",
@@ -60,7 +62,9 @@
       "pixelOffice": "Rencanakan dan tugaskan riset. Penugasan tidak memulai eksekusi; pangkat hanya label dan tidak memberikan izin transaksi.",
       "paperTrading": "Hanya candle harian yang selesai dapat diproses. Strategi membaca hari sebelumnya dan dieksekusi pada penutupan hari eksekusi. Tunggu 30 menit setelah penutupan reguler; tidak ada eksekusi otomatis yang dijadwalkan.",
       "researchArtifacts": "Cari analisis sebelumnya, buka revisi apa pun, atau buat revisi tertaut dengan bukti baru. Kesimpulan lama tetap tidak berubah.",
-      "researchLab": "Periksa biaya, parameter terkunci di luar sampel, rumus faktor, dan bukti tersimpan."
+      "researchLab": "Periksa biaya, parameter terkunci di luar sampel, rumus faktor, dan bukti tersimpan.",
+      "market": "Ketik simbol beserta akhiran bursanya, lalu pilih rentang dan interval. Overlay, panel, dan zoom adalah kontrol grafik; halaman ini tidak menulis data.",
+      "journal": "Impor laporan broker lalu buka simbol mana pun untuk melihat transaksi Anda di grafik. Halaman ini tidak mengirim order."
     }
   },
   "layout": {
@@ -94,7 +98,9 @@
     "pixelOffice": "Kantor piksel",
     "paperTrading": "Trading simulasi",
     "researchArtifacts": "Artefak riset",
-    "researchLab": "Laboratorium riset"
+    "researchLab": "Laboratorium riset",
+    "market": "Pasar",
+    "journal": "Tinjauan transaksi"
   },
   "researchArtifacts": {
     "compareTitle": "Perbandingan revisi",
@@ -2774,5 +2780,75 @@
     "rolling": "Bergulir",
     "expanding": "Meluas",
     "invalidChoices": "Masukkan nilai untuk setiap pilihan."
+  },
+  "market": {
+    "title": "Pasar & Candlestick",
+    "subtitle": "OHLCV harian, mingguan, dan bulanan dengan moving average, volume, dan panel momentum.",
+    "symbol": "Simbol",
+    "symbolPlaceholder": "mis. 000001.SZ",
+    "load": "Muat",
+    "range": "Rentang",
+    "interval": "Interval",
+    "interval_1D": "Harian",
+    "interval_1W": "Mingguan",
+    "interval_1M": "Bulanan",
+    "source": "Sumber",
+    "caliber": "Dasar harga",
+    "bars": "bar",
+    "empty": "Tidak ada bar untuk simbol dan rentang ini.",
+    "error": "Gagal memuat data pasar.",
+    "hint": "Kode saham A memerlukan akhiran bursa (.SH / .SZ / .BJ). Grafik dan backtest memakai loader yang sama, jadi simbol yang tampil di sini juga bisa di-backtest."
+  },
+  "journal": {
+    "title": "Tinjauan transaksi",
+    "subtitle": "Impor laporan broker dan lihat bagaimana Anda sebenarnya bertransaksi.",
+    "importBtn": "Impor laporan",
+    "importing": "Mengimpor…",
+    "formats": "Mendukung ekspor CSV dan Excel dari 招商证券 / 华泰 / 中信 / 同花顺 / 东方财富. Mengimpor ulang bulan yang tumpang tindih hanya menambah transaksi baru.",
+    "empty": "Belum ada transaksi yang diimpor",
+    "emptyHint": "Ekspor «交割单 / 对账单» dari aplikasi broker (CSV atau Excel) lalu impor di sini. Semua data tetap di perangkat ini.",
+    "importOk": "{{inserted}} transaksi diimpor, {{duplicates}} duplikat dilewati",
+    "importFailed": "Impor gagal",
+    "loadFailed": "Gagal memuat riwayat",
+    "deleteFailed": "Gagal menghapus impor",
+    "delete": "Hapus impor ini",
+    "trades": "transaksi",
+    "symbols": "simbol",
+    "duplicates": "duplikat",
+    "totalPnl": "P&L terealisasi",
+    "winRate": "Tingkat kemenangan",
+    "pnlRatio": "Rasio untung/rugi",
+    "avgHold": "Rata-rata pegang",
+    "frequency": "Transaksi/minggu",
+    "maxDrawdown": "Penurunan maksimum",
+    "days": "hari",
+    "week": "minggu",
+    "behavior": "Diagnosis perilaku",
+    "disposition_effect": "Efek disposisi",
+    "overtrading": "Transaksi berlebihan",
+    "chasing_momentum": "Mengejar momentum",
+    "anchoring": "Penjangkaran",
+    "severity_low": "rendah",
+    "severity_medium": "sedang",
+    "severity_high": "tinggi",
+    "monthly": "P&L terealisasi bulanan",
+    "topSymbols": "Simbol paling sering ditransaksikan",
+    "ledger": "Buku transaksi",
+    "colTime": "Waktu",
+    "colSymbol": "Simbol",
+    "colSide": "Arah",
+    "colQty": "Jumlah",
+    "colPrice": "Harga",
+    "colAmount": "Nilai",
+    "colFee": "Biaya",
+    "side_buy": "Beli",
+    "side_sell": "Jual",
+    "side_dividend": "Dividen",
+    "imports": "Berkas yang diimpor",
+    "chartTitle": "{{symbol}} dengan transaksi saya",
+    "chartHint": "Tanda B/S adalah transaksi Anda sendiri",
+    "hideChart": "Tutup grafik",
+    "chartEmpty": "Tidak ada data grafik untuk simbol ini",
+    "chartFailed": "Gagal memuat grafik"
   }
 }

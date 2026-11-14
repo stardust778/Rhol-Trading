@@ -40,7 +40,9 @@
       "pixelOffice": "规划和分配研究任务。分配任务不会启动执行；职级只是标签，不授予交易权限。",
       "paperTrading": "使用模拟资金测试每日交易，不向券商发送订单。结果不含现金分红，不代表总回报。",
       "researchArtifacts": "跨会话保存并复用有证据支持的分析。",
-      "researchLab": "检验交易成本、锁定参数的样本外表现、因子定义和已保存的研究证据。"
+      "researchLab": "检验交易成本、锁定参数的样本外表现、因子定义和已保存的研究证据。",
+      "market": "做策略之前先看清任意标的的 K 线。",
+      "journal": "复盘自己的成交、盈亏与行为偏差。"
     },
     "instructions": {
       "reports": "先在研究助手中描述策略并完成回测，再到这里打开结果。聊天生成的 PDF 等文档在原对话中下载。",
@@ -54,7 +56,9 @@
       "pixelOffice": "规划和分配研究任务。分配任务不会启动执行；职级只是标签，不授予交易权限。",
       "paperTrading": "仅结算已完成的日线。策略只读取此前数据，在执行日收盘价成交。请等正常收市后 30 分钟；不会自动安排后台执行。",
       "researchArtifacts": "搜索历史分析，展开任意修订，或添加新证据创建关联修订。旧结论保持不变。",
-      "researchLab": "检验交易成本、锁定参数的样本外表现、因子定义和已保存的研究证据。"
+      "researchLab": "检验交易成本、锁定参数的样本外表现、因子定义和已保存的研究证据。",
+      "market": "输入带交易所后缀的代码，再选区间与周期。叠加指标、副图和缩放都在图上操作，本页不会写入任何数据。",
+      "journal": "导入券商交割单后，点任意标的就能在 K 线上看到自己的买卖点。本页不涉及实盘下单。"
     }
   },
   "layout": {
@@ -88,7 +92,9 @@
     "pixelOffice": "像素办公室",
     "paperTrading": "模拟交易",
     "researchArtifacts": "研究资料",
-    "researchLab": "研究实验室"
+    "researchLab": "研究实验室",
+    "market": "行情",
+    "journal": "交易复盘"
   },
   "researchArtifacts": {
     "compareTitle": "修订比较",
@@ -2774,5 +2780,75 @@
     "rolling": "滚动窗口",
     "expanding": "扩展窗口",
     "invalidChoices": "请填写每个候选值，逗号之间不能留空。"
+  },
+  "market": {
+    "title": "行情与 K 线",
+    "subtitle": "日/周/月 OHLCV，含均线、成交量与动量副图。",
+    "symbol": "代码",
+    "symbolPlaceholder": "例如 000001.SZ",
+    "load": "加载",
+    "range": "区间",
+    "interval": "周期",
+    "interval_1D": "日",
+    "interval_1W": "周",
+    "interval_1M": "月",
+    "source": "数据源",
+    "caliber": "价格口径",
+    "bars": "根",
+    "empty": "该代码在此区间没有数据。",
+    "error": "行情加载失败。",
+    "hint": "A 股代码必须带交易所后缀（.SH / .SZ / .BJ）。图表与回测走同一套 loader，这里能画的标的就能回测。"
+  },
+  "journal": {
+    "title": "交易复盘",
+    "subtitle": "导入券商交割单，看清自己真实的交易行为。",
+    "importBtn": "导入交割单",
+    "importing": "导入中…",
+    "formats": "支持招商证券 / 华泰 / 中信 / 同花顺 / 东方财富导出的 CSV 与 Excel；重复导入重叠月份只会补新增成交。",
+    "empty": "还没有导入成交记录",
+    "emptyHint": "从券商 App 或 PC 端导出「交割单 / 对账单」（CSV 或 Excel），在这里导入。数据只存在本机。",
+    "importOk": "导入 {{inserted}} 笔成交，跳过 {{duplicates}} 笔重复",
+    "importFailed": "导入失败",
+    "loadFailed": "加载交易记录失败",
+    "deleteFailed": "删除导入失败",
+    "delete": "删除该批导入",
+    "trades": "笔成交",
+    "symbols": "个标的",
+    "duplicates": "笔重复",
+    "totalPnl": "已实现盈亏",
+    "winRate": "胜率",
+    "pnlRatio": "盈亏比",
+    "avgHold": "平均持仓",
+    "frequency": "周均交易",
+    "maxDrawdown": "最大回撤",
+    "days": "天",
+    "week": "周",
+    "behavior": "行为诊断",
+    "disposition_effect": "处置效应",
+    "overtrading": "过度交易",
+    "chasing_momentum": "追涨",
+    "anchoring": "锚定",
+    "severity_low": "低",
+    "severity_medium": "中",
+    "severity_high": "高",
+    "monthly": "月度已实现盈亏",
+    "topSymbols": "交易最多的标的",
+    "ledger": "成交流水",
+    "colTime": "时间",
+    "colSymbol": "代码",
+    "colSide": "方向",
+    "colQty": "数量",
+    "colPrice": "价格",
+    "colAmount": "金额",
+    "colFee": "费用",
+    "side_buy": "买入",
+    "side_sell": "卖出",
+    "side_dividend": "分红",
+    "imports": "已导入文件",
+    "chartTitle": "{{symbol}} 与我的买卖点",
+    "chartHint": "B/S 标记是你自己的成交",
+    "hideChart": "关闭图表",
+    "chartEmpty": "该标的暂无行情数据",
+    "chartFailed": "图表加载失败"
   }
 }

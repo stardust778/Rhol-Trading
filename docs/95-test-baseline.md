@@ -5,7 +5,7 @@
 ## 命令
 
 ```bash
-cd /Users/lirihao/Vibe-Trading && source .venv/bin/activate
+cd /Users/lirihao/Rhol-Trading && source .venv/bin/activate
 python -m pytest --ignore=agent/tests/e2e_backtest \
   --ignore=agent/tests/test_e2e_harness_v2.py --tb=short -q
 ```
