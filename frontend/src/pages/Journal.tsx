@@ -5,6 +5,8 @@ import { Loader2, Trash2, Upload } from "lucide-react";
 import { CandlestickChart } from "@/components/charts/CandlestickChart";
 import {
   api,
+  type ChanReview,
+  type ChanReviewRow,
   type JournalAnalysis,
   type JournalBehaviorMetric,
   type JournalSummary,
@@ -361,6 +363,7 @@ function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void 
   const { t } = useTranslation();
   const [payload, setPayload] = useState<MarketOhlcResponse | null>(null);
   const [markers, setMarkers] = useState<TradeMarker[]>([]);
+  const [chan, setChan] = useState<ChanReview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -369,13 +372,17 @@ function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void 
     setLoading(true);
     setError(null);
     (async () => {
-      const own = await api.getJournalTrades(symbol, 2000);
+      const [own, chanReview] = await Promise.all([
+        api.getJournalTrades(symbol, 2000),
+        api.getChanReview(symbol, controller.signal).catch(() => null),
+      ]);
       const dates = own.trades.map((row) => row.datetime.slice(0, 10)).sort();
       const start = dates[0] ? shiftDays(dates[0], -90) : undefined;
       const end = dates[dates.length - 1] ? shiftDays(dates[dates.length - 1], 5) : undefined;
       const next = await api.getMarketOhlc(symbol, { start, end, interval: "1D" }, controller.signal);
       if (controller.signal.aborted) return;
       setPayload(next);
+      setChan(chanReview);
       setMarkers(
         own.trades
           .filter((row) => row.side === "buy" || row.side === "sell")
@@ -418,6 +425,101 @@ function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void 
           <div className="flex h-[420px] items-center justify-center text-sm text-muted-foreground">{t("journal.chartEmpty")}</div>
         )}
       </div>
+      {chan && <ChanReviewPanel review={chan} />}
     </section>
+  );
+}
+
+function ChanReviewPanel({ review }: { review: ChanReview }) {
+  const { t } = useTranslation();
+  const latest = review.structure.latest;
+  const center = latest.center;
+  return (
+    <div className="space-y-2 rounded-xl border bg-card p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-sm font-semibold">{t("chan.title")}</h3>
+        {center && (
+          <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+            {t("chan.center")}: {center.zd.toFixed(2)} ~ {center.zg.toFixed(2)} ({center.start} ~ {center.end})
+          </span>
+        )}
+        {latest.bi_direction && (
+          <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+            {t("chan.currentBi")}: {t(`chan.${latest.bi_direction}`)}
+            {latest.bi_start && latest.bi_end ? ` (${latest.bi_start} ~ ${latest.bi_end})` : ""}
+          </span>
+        )}
+        {review.structure.signals.length > 0 && (
+          <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+            {t("chan.latestSignal")}: {t(`chan.type_${review.structure.signals[review.structure.signals.length - 1].type}`)}
+            {" "}{review.structure.signals[review.structure.signals.length - 1].date}
+          </span>
+        )}
+      </div>
+
+      {review.trades.length === 0 ? (
+        <p className="text-xs text-muted-foreground">{t("chan.noTrades")}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-muted-foreground">
+              <tr>
+                <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colTime")}</th>
+                <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colSide")}</th>
+                <th className="py-1.5 pe-3 text-end font-medium">{t("chan.colPrice")}</th>
+                <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colVerdict")}</th>
+                <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colSignal")}</th>
+                <th className="py-1.5 pe-3 text-end font-medium">{t("chan.colFwd", { n: 5 })}</th>
+                <th className="py-1.5 pe-3 text-end font-medium">{t("chan.colFwd", { n: 10 })}</th>
+                <th className="py-1.5 text-end font-medium">{t("chan.colFwd", { n: 20 })}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {review.trades.map((row) => (
+                <ChanReviewTableRow key={`${row.trade_id ?? row.datetime}-${row.side}`} row={row} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="text-[10px] leading-relaxed text-muted-foreground">{t("chan.note")}</p>
+    </div>
+  );
+}
+
+function ChanReviewTableRow({ row }: { row: ChanReviewRow }) {
+  const { t } = useTranslation();
+  const tone =
+    row.verdict.quality === "good" ? "text-success" : row.verdict.quality === "poor" ? "text-danger" : "text-muted-foreground";
+  return (
+    <tr className="border-t">
+      <td className="py-1.5 pe-3 tabular-nums text-muted-foreground">{row.datetime.slice(0, 16)}</td>
+      <td className={cn("py-1.5 pe-3", row.side === "buy" ? "text-danger" : "text-success")}>
+        {t(`journal.side_${row.side}`)}
+      </td>
+      <td className="py-1.5 pe-3 text-end tabular-nums">{fmtNumber(row.price)}</td>
+      <td className={cn("py-1.5 pe-3", tone)}>{t(`chan.verdict_${row.verdict.key}` as never)}</td>
+      <td className="py-1.5 pe-3 text-muted-foreground">
+        {row.signal
+          ? `${t(`chan.type_${row.signal.type}`)} ${row.signal.date}`
+          : row.opposing_signal
+            ? t("chan.opposingSignal", { type: t(`chan.type_${row.opposing_signal.type}`) })
+            : "—"}
+      </td>
+      {[5, 10, 20].map((horizon) => {
+        const value = row.forward[String(horizon)];
+        return (
+          <td
+            key={horizon}
+            className={cn(
+              "py-1.5 pe-3 text-end tabular-nums",
+              value === null || value === undefined ? "text-muted-foreground" : value >= 0 ? "text-success" : "text-danger",
+            )}
+          >
+            {value === null || value === undefined ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`}
+          </td>
+        );
+      })}
+    </tr>
   );
 }

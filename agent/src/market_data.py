@@ -86,6 +86,68 @@ def detect_source(code: str) -> str:
 
 
 
+#: Display names come from Tencent's public quote endpoint. Cached because a
+#: chart page re-requests the same handful of symbols on every range switch.
+_NAME_CACHE: dict[str, tuple[float, str | None]] = {}
+_NAME_TTL_HIT = 86_400.0
+_NAME_TTL_MISS = 300.0
+
+
+def lookup_instrument_name(symbol: str) -> str | None:
+    """Return a display name for A-share / HK symbols, or ``None``.
+
+    Best-effort: the quote endpoint is public and keyless, so a failure here
+    must never break the OHLC response. Only suffixes the endpoint understands
+    are attempted; everything else returns ``None`` (the UI falls back to the
+    code).
+
+    Args:
+        symbol: Normalized symbol such as ``000001.SZ`` or ``00700.HK``.
+    """
+    import time
+
+    code = symbol.strip().upper()
+    cached = _NAME_CACHE.get(code)
+    if cached is not None:
+        stamped, name = cached
+        if time.monotonic() - stamped < (_NAME_TTL_HIT if name else _NAME_TTL_MISS):
+            return name
+
+    prefix = None
+    match = re.fullmatch(r"(\d{6})\.(SH|SZ|BJ)", code)
+    if match:
+        prefix = {"SH": "sh", "SZ": "sz", "BJ": "bj"}[match.group(2)] + match.group(1)
+    else:
+        hk = re.fullmatch(r"(\d{5})\.HK", code)
+        if hk:
+            prefix = "hk" + hk.group(1)
+    if prefix is None:
+        _NAME_CACHE[code] = (time.monotonic(), None)
+        return None
+
+    name: str | None = None
+    try:
+        import httpx
+
+        response = httpx.get(
+            f"https://qt.gtimg.cn/q={prefix}",
+            timeout=3.0,
+            headers={"Referer": "https://gu.qq.com/"},
+        )
+        response.raise_for_status()
+        text = response.content.decode("gbk", errors="ignore")
+        payload = text.split('"')
+        if len(payload) >= 2:
+            fields = payload[1].split("~")
+            if len(fields) > 1 and fields[1].strip():
+                name = fields[1].strip()
+    except Exception:  # a missing name must never fail the chart
+        name = None
+
+    _NAME_CACHE[code] = (time.monotonic(), name)
+    return name
+
+
 def normalize_crypto_symbol(code: str) -> str:
     """Normalize USDT spot aliases without changing the requested quote asset."""
     cleaned = code.strip().upper()

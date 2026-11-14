@@ -12,34 +12,46 @@ import { useThemeDark } from "@/lib/theme-store";
 
 type Sub = "vol" | "macd" | "rsi" | "kdj";
 type Range = "1M" | "3M" | "6M" | "1Y" | "ALL";
-type Overlay = "ma5" | "ma10" | "ma20" | "ma60" | "ema12" | "ema26" | "boll";
+type Overlay =
+  | "ma5" | "ma10" | "ma20" | "ma30" | "ma55" | "ma60" | "ma99" | "ma128" | "ma225"
+  | "ema12" | "ema26" | "boll";
 
 const OVERLAY_OPTIONS: { id: Overlay; label: string; group: string }[] = [
   { id: "ma5", label: "MA5", group: "MA" },
   { id: "ma10", label: "MA10", group: "MA" },
   { id: "ma20", label: "MA20", group: "MA" },
+  { id: "ma30", label: "MA30", group: "MA" },
+  { id: "ma55", label: "MA55", group: "MA" },
   { id: "ma60", label: "MA60", group: "MA" },
+  { id: "ma99", label: "MA99", group: "MA" },
+  { id: "ma128", label: "MA128", group: "MA" },
+  { id: "ma225", label: "MA225", group: "MA" },
   { id: "ema12", label: "EMA12", group: "MA" },
   { id: "ema26", label: "EMA26", group: "MA" },
   { id: "boll", label: "BOLL", group: "Channel" },
 ];
 
 const RANGE_BARS: Record<Range, number> = { "1M": 22, "3M": 63, "6M": 126, "1Y": 252, ALL: Infinity };
-const OVERLAY_COLORS = ["#f59e0b", "#8b5cf6", "#3b82f6", "#ec4899", "#10b981", "#f97316", "#6366f1"];
+const OVERLAY_COLORS = [
+  "#f59e0b", "#8b5cf6", "#3b82f6", "#ec4899", "#10b981", "#f97316",
+  "#6366f1", "#14b8a6", "#eab308", "#a855f7", "#0ea5e9", "#84cc16",
+];
 
 interface Props {
   data: PriceBar[];
   markers?: TradeMarker[];
   indicators?: Record<string, IndicatorPoint[]>;
   height?: number;
+  /** Overlays selected on first render; the chart menu stays interactive. */
+  defaultOverlays?: Overlay[];
 }
 
-export function CandlestickChart({ data, markers, indicators, height = 500 }: Props) {
+export function CandlestickChart({ data, markers, indicators, height = 500, defaultOverlays }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<ReturnType<typeof echarts.init> | null>(null);
   const [sub, setSub] = useState<Sub>("vol");
   const [range, setRange] = useState<Range>("ALL");
-  const [overlays, setOverlays] = useState<Set<Overlay>>(new Set(["ma5", "ma20"]));
+  const [overlays, setOverlays] = useState<Set<Overlay>>(new Set(defaultOverlays ?? ["ma5", "ma20"]));
   const [showMenu, setShowMenu] = useState(false);
   const dark = useThemeDark();
 
@@ -67,7 +79,12 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
     ma5: calcMA(baseData.closes, 5),
     ma10: calcMA(baseData.closes, 10),
     ma20: calcMA(baseData.closes, 20),
+    ma30: calcMA(baseData.closes, 30),
+    ma55: calcMA(baseData.closes, 55),
     ma60: calcMA(baseData.closes, 60),
+    ma99: calcMA(baseData.closes, 99),
+    ma128: calcMA(baseData.closes, 128),
+    ma225: calcMA(baseData.closes, 225),
     ema12: calcEMA(baseData.closes, 12),
     ema26: calcEMA(baseData.closes, 26),
     boll: calcBOLL(baseData.closes, 20, 2),
@@ -128,7 +145,12 @@ export function CandlestickChart({ data, markers, indicators, height = 500 }: Pr
       ma5: { name: "MA5", data: indicatorCache.ma5 },
       ma10: { name: "MA10", data: indicatorCache.ma10 },
       ma20: { name: "MA20", data: indicatorCache.ma20 },
+      ma30: { name: "MA30", data: indicatorCache.ma30 },
+      ma55: { name: "MA55", data: indicatorCache.ma55 },
       ma60: { name: "MA60", data: indicatorCache.ma60 },
+      ma99: { name: "MA99", data: indicatorCache.ma99 },
+      ma128: { name: "MA128", data: indicatorCache.ma128 },
+      ma225: { name: "MA225", data: indicatorCache.ma225 },
       ema12: { name: "EMA12", data: indicatorCache.ema12 },
       ema26: { name: "EMA26", data: indicatorCache.ema26 },
     };

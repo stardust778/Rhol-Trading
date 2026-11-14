@@ -46,7 +46,7 @@ GET  /runs/{id}                     → run 详情（重）
 
 ### 路由分组
 
-`/sessions` `/runs` `/api/market/ohlc` `/api/journal/*` `/settings/*` `/live/*` `/mandate/commit` `/api/portfolio/*` `/api/paper-accounts/*` `/swarm/*` `/scheduled-runs` `/channels/*` `/alpha/*` `/options/*` `/api/research-lab/*` `/api/research-artifacts/*` `/upload` `/live` `/health`
+`/sessions` `/runs` `/api/market/ohlc` `/api/journal/*` `/api/chan/*` `/settings/*` `/live/*` `/mandate/commit` `/api/portfolio/*` `/api/paper-accounts/*` `/swarm/*` `/scheduled-runs` `/channels/*` `/alpha/*` `/options/*` `/api/research-lab/*` `/api/research-artifacts/*` `/upload` `/live` `/health`
 
 ### 前端
 

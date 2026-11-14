@@ -25,7 +25,7 @@ export function Market() {
   const { t } = useTranslation();
   const [draft, setDraft] = useState<string>("000001.SZ");
   const [symbol, setSymbol] = useState<string>("000001.SZ");
-  const [range, setRange] = useState<RangeKey>("1Y");
+  const [range, setRange] = useState<RangeKey>("3Y");
   const [interval, setIntervalKey] = useState<IntervalKey>("1D");
   const [payload, setPayload] = useState<MarketOhlcResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -155,7 +155,10 @@ export function Market() {
 
       {last && (
         <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-          <div className="font-mono text-lg font-semibold">{payload?.symbol}</div>
+          <div className="flex items-baseline gap-2">
+            <span className="font-mono text-lg font-semibold">{payload?.symbol}</span>
+            {payload?.name && <span className="text-sm text-muted-foreground">{payload.name}</span>}
+          </div>
           <div className="text-3xl font-semibold tabular-nums">{last.close.toFixed(2)}</div>
           {changePct !== null && (
             <div className={cn("pb-1 text-sm font-medium tabular-nums", changePct >= 0 ? "text-success" : "text-danger")}>
@@ -174,7 +177,11 @@ export function Market() {
 
       <div className="rounded-xl border bg-card p-2">
         {bars.length > 0 ? (
-          <CandlestickChart data={bars} height={520} />
+          <CandlestickChart
+            data={bars}
+            height={520}
+            defaultOverlays={["ma5", "ma10", "ma20", "ma30", "ma55", "ma99", "ma128", "ma225"]}
+          />
         ) : (
           <div className="flex h-[520px] items-center justify-center text-sm text-muted-foreground">
             {loading ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : t("market.empty")}

@@ -89,6 +89,84 @@ export function isAuthRequiredError(error: unknown): boolean {
   return error instanceof ApiError && (error.status === 401 || error.status === 403);
 }
 
+export type ChanSignals = "1buy" | "2buy" | "3buy" | "1sell" | "2sell" | "3sell";
+
+export interface ChanBi {
+  start: string;
+  end: string;
+  start_price: number;
+  end_price: number;
+  direction: "up" | "down";
+  high: number;
+  low: number;
+  change: number;
+}
+
+export interface ChanCenter {
+  start: string;
+  end: string;
+  zg: number;
+  zd: number;
+  gg: number;
+  dd: number;
+  valid: boolean;
+  direction: "up" | "down";
+}
+
+export interface ChanSignal {
+  date: string;
+  type: ChanSignals;
+  price: number;
+  bi_direction?: "up" | "down";
+}
+
+export interface ChanLatest {
+  bi_direction: "up" | "down" | null;
+  bi_start: string | null;
+  bi_end: string | null;
+  center: ChanCenter | null;
+  last_signals: ChanSignal[];
+}
+
+export interface ChanStructure {
+  symbol: string;
+  bars: number;
+  bis: ChanBi[];
+  centers: ChanCenter[];
+  signals: ChanSignal[];
+  latest: ChanLatest;
+}
+
+export interface ChanVerdict {
+  key: string;
+  quality: "good" | "neutral" | "poor";
+  signal_type: ChanSignals | null;
+}
+
+export interface ChanReviewRow {
+  trade_id: string | null;
+  datetime: string;
+  side: "buy" | "sell";
+  price: number;
+  signal: ChanSignal | null;
+  opposing_signal?: ChanSignal | null;
+  verdict: ChanVerdict;
+  center: ChanCenter | null;
+  bi_direction: "up" | "down" | null;
+  forward: Record<string, number | null>;
+}
+
+export interface ChanReview {
+  symbol: string;
+  structure: {
+    bars: number;
+    latest: ChanLatest;
+    centers: ChanCenter[];
+    signals: ChanSignal[];
+  };
+  trades: ChanReviewRow[];
+}
+
 export interface JournalImportBatch {
   import_id: string;
   filename: string;
@@ -180,6 +258,7 @@ export interface MarketBar {
 
 export interface MarketOhlcResponse {
   symbol: string;
+  name?: string | null;
   interval: string;
   start: string;
   end: string;
@@ -735,6 +814,10 @@ export const api = {
     request<CorrelationRegimeResponse>(
       `/correlation/regime?codes=${encodeURIComponent(codes)}&days=${encodeURIComponent(String(days))}`,
     ),
+  getChanAnalysis: (symbol: string, signal?: AbortSignal) =>
+    request<ChanStructure>(`/api/chan/analysis?symbol=${encodeURIComponent(symbol)}`, { signal }),
+  getChanReview: (symbol: string, signal?: AbortSignal) =>
+    request<ChanReview>(`/api/chan/review?symbol=${encodeURIComponent(symbol)}`, { signal }),
   getJournalSummary: () => request<JournalSummary>("/api/journal/summary"),
   getJournalAnalysis: () => request<JournalAnalysis>("/api/journal/analysis"),
   getJournalTrades: (symbol?: string, limit = 500) => {

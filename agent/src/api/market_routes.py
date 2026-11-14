@@ -218,7 +218,7 @@ def register_market_routes(
         if cached is not None:
             return cached
 
-        from src.market_data import fetch_market_data
+        from src.market_data import fetch_market_data, lookup_instrument_name
 
         try:
             payload = await asyncio.to_thread(
@@ -251,8 +251,10 @@ def register_market_routes(
             raise HTTPException(status_code=404, detail=detail)
 
         provenance = (payload.get("_provenance") or {}).get(code, {})
+        name = await asyncio.to_thread(lookup_instrument_name, code)
         body = {
             "symbol": code,
+            "name": name,
             "interval": interval,
             "start": start_day.isoformat(),
             "end": end_day.isoformat(),

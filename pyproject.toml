@@ -141,6 +141,12 @@ include = ["src*", "backtest*", "cli*", "evals*"]
 "src.factors" = ["*.json", "zoo/**/*.yaml", "zoo/**/*.md", "zoo/**/NOTICE"]
 
 [project.optional-dependencies]
+chan = [
+    # 缠论 structure engine (fractals / strokes / centers) used by the
+    # /api/chan/* review routes. Lazy-imported: when absent those routes
+    # return 503 while every other feature keeps working.
+    "czsc>=1.0.2",
+]
 ibkr = [
     "ib_async>=2.0",
 ]

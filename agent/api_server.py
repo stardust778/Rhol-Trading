@@ -225,6 +225,10 @@ register_market_routes(app)
 from src.api.journal_routes import register_journal_routes  # noqa: E402
 register_journal_routes(app)
 
+# --- Chan theory analysis (缠论 review) ---
+from src.api.chan_routes import register_chan_routes  # noqa: E402
+register_chan_routes(app)
+
 # --- System ---
 from src.api.system_routes import register_system_routes  # noqa: E402
 register_system_routes(app)
