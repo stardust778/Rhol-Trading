@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Journal } from "@/pages/Journal";
 import { api } from "@/lib/api";
@@ -20,6 +21,7 @@ vi.mock("@/lib/api", async () => {
       deleteJournalImport: vi.fn(),
       getMarketOhlc: vi.fn(),
       getChanReview: vi.fn(),
+      getChanAnalysis: vi.fn(),
     },
   };
 });
@@ -30,6 +32,7 @@ const mocked = api as unknown as {
   getJournalTrades: ReturnType<typeof vi.fn>;
   getMarketOhlc: ReturnType<typeof vi.fn>;
   getChanReview: ReturnType<typeof vi.fn>;
+  getChanAnalysis: ReturnType<typeof vi.fn>;
 };
 
 const EMPTY_SUMMARY = {
@@ -63,7 +66,7 @@ describe("Journal page", () => {
     mocked.getJournalAnalysis.mockResolvedValue({ status: "empty", records: 0 });
     mocked.getJournalTrades.mockResolvedValue({ status: "ok", symbol: null, count: 0, trades: [] });
 
-    render(<Journal />);
+    render(<MemoryRouter><Journal /></MemoryRouter>);
 
     expect(await screen.findByText("No trades imported yet")).toBeInTheDocument();
     expect(screen.getByText(/Export a 交割单 or 对账单/)).toBeInTheDocument();
@@ -123,7 +126,7 @@ describe("Journal page", () => {
       trades: [TRADE],
     });
 
-    render(<Journal />);
+    render(<MemoryRouter><Journal /></MemoryRouter>);
 
     expect(await screen.findByText("Disposition effect")).toBeInTheDocument();
     expect(screen.getByText("Overtrading")).toBeInTheDocument();
@@ -165,6 +168,13 @@ describe("Journal Chan review", () => {
       source: "tencent", fallback_used: false, adjustment: "split_dividend_additive", volume_unit: "lots",
       bars: [{ time: "2026-10-09", open: 11.7, high: 11.9, low: 11.6, close: 11.8, volume: 1000 }],
     });
+    mocked.getChanAnalysis.mockResolvedValue({
+      symbol: "000001.SZ", bars: 693,
+      bis: [{ start: "2026-10-09", end: "2026-10-26", start_price: 11.89, end_price: 11.13, direction: "down", high: 11.89, low: 11.13, change: -0.064 }],
+      centers: [],
+      signals: [{ date: "2026-10-09", type: "1sell", price: 11.89 }],
+      latest: { bi_direction: "down", bi_start: "2026-10-09", bi_end: "2026-10-26", center: null, last_signals: [] },
+    });
     mocked.getChanReview.mockResolvedValue({
       symbol: "000001.SZ",
       structure: {
@@ -187,12 +197,12 @@ describe("Journal Chan review", () => {
       }],
     });
 
-    render(<Journal />);
+    render(<MemoryRouter><Journal /></MemoryRouter>);
     fireEvent.click(await screen.findByRole("button", { name: "000001.SZ" }));
 
     expect(await screen.findByText("Chan structure")).toBeInTheDocument();
     expect(screen.getByText("Filled against a Chan signal")).toBeInTheDocument();
     expect(screen.getByText("Opposing: 1st sell")).toBeInTheDocument();
-    await waitFor(() => expect(mocked.getChanReview).toHaveBeenCalledWith("000001.SZ", expect.anything()));
+    await waitFor(() => expect(mocked.getChanReview).toHaveBeenCalledWith("000001.SZ", "1D", expect.anything()));
   });
 });

@@ -9,7 +9,8 @@ const RANGES = ["3M", "6M", "1Y", "3Y"] as const;
 type RangeKey = (typeof RANGES)[number];
 const RANGE_DAYS: Record<RangeKey, number> = { "3M": 90, "6M": 180, "1Y": 365, "3Y": 1095 };
 
-const INTERVALS = ["1D", "1W", "1M"] as const;
+const INTERVALS = ["1m", "5m", "30m", "1D", "1W", "1M"] as const;
+const INTRADAY = new Set<string>(["1m", "5m", "30m", "60m"]);
 type IntervalKey = (typeof INTERVALS)[number];
 
 const QUICK_PICKS = ["000001.SZ", "600519.SH", "300750.SZ", "510300.SH", "00700.HK"] as const;
@@ -105,7 +106,7 @@ export function Market() {
           {t("market.load")}
         </button>
 
-        <div role="group" aria-label={t("market.range")} className="flex overflow-hidden rounded-lg border">
+        {!INTRADAY.has(interval) && <div role="group" aria-label={t("market.range")} className="flex overflow-hidden rounded-lg border">
           {RANGES.map((item) => (
             <button
               key={item}
@@ -117,7 +118,7 @@ export function Market() {
               {item}
             </button>
           ))}
-        </div>
+        </div>}
 
         <div role="group" aria-label={t("market.interval")} className="flex overflow-hidden rounded-lg border">
           {INTERVALS.map((item) => (

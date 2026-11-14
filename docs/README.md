@@ -81,6 +81,9 @@ PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run dev
 - ✅ 行情 K 线页：`GET /api/market/ohlc` + 前端 `/market`，与回测共用 loader / 复权口径
 - ✅ 交割单复盘：中文通用解析器（招商风格）+ `/api/journal/*` + 前端 `/journal`，成交落 SQLite 去重
 - ✅ 缠论复盘：`czsc`（可选依赖 `pip install -e ".[chan]"`）算分型/笔/中枢，`/api/chan/*` 逐笔判定买卖点结构
+- ✅ 多级别：1m / 5m / 30m / 60m / 日 / 周；分钟线走 Sina/Eastmoney 公开接口（`src/market_intraday.py`）
+- ✅ 复盘画图：K 线上叠加笔（紫线）、中枢（紫色区间）、缠论买卖点（1B/2S…）与自己的 B/S 成交点
+- ✅ 复盘判定：缠论结构 + 区间套（上一级别确认）+ 均线量价（MA20/多头排列/回踩缩量/放量突破）+ 后 5/10/20 日收益
 - ✅ 回测引擎：104 个单测通过；因子门 + loader 契约 + run_card：973 passed / 23 skipped
 - ⚠️ **Yahoo/yfinance 在你的网络下不可达**（预检会重试约 1 分钟才继续）→ 优先用 A 股数据源
 - ⚠️ 服务端启动会做网络预检，首次启动约需 60–90 秒
@@ -91,6 +94,8 @@ PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run dev
 - 新增 `agent/src/chan/analyzer.py`（缠论结构 + 逐笔判定）与 `agent/src/api/chan_routes.py`（`/api/chan/analysis|review|signals`）；
   前端 Journal 的个股图下方增加「缠论结构 + 逐笔点评」。依赖 `czsc>=1.0.2`（`.[chan]` extra，未安装时接口返回 503）。
 - 行情页显示标的中文名（腾讯公开行情接口，A股/港股），MA 默认 5/10/20/30/55/99/128/225。
+- 侧栏只保留 行情 / 交易复盘 / 账户持仓 / 定时任务（`navigation.ts` 里其余条目已注释，路由未删，取消注释即可恢复；`/` 重定向到 `/market`）。
+- 交易复盘支持 `?symbol=000001.SZ` 深链，图表下方是缠论结构与逐笔点评（含区间套、均线量价、前瞻收益）。
 - 新增 `agent/src/api/journal_routes.py`、`agent/src/journal/{store,analysis}.py` 与 `frontend/src/pages/Journal.tsx`（`/journal`）；
   `trade_journal_parsers.py` 增加中文通用交割单/对账单解析器 `cn_broker`，并让 CSV 加载器跳过券商导出前置的标题行。
 - `frontend/src/components/options/PayoffComparisons.tsx`：3 处动态 i18n key 加 `as never`。

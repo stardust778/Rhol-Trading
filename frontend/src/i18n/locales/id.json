@@ -29,7 +29,8 @@
     "groups": {
       "research": "Riset sehari-hari",
       "analysis": "Analisis khusus",
-      "automation": "Otomatisasi & pengaturan"
+      "automation": "Otomatisasi & pengaturan",
+      "trading": "Trading"
     },
     "howTo": "Cara menggunakan {{feature}}",
     "startResearch": "Mulai dengan asisten riset",
@@ -2797,7 +2798,10 @@
     "bars": "bar",
     "empty": "Tidak ada bar untuk simbol dan rentang ini.",
     "error": "Gagal memuat data pasar.",
-    "hint": "Kode saham A memerlukan akhiran bursa (.SH / .SZ / .BJ). Grafik dan backtest memakai loader yang sama, jadi simbol yang tampil di sini juga bisa di-backtest."
+    "hint": "Kode saham A memerlukan akhiran bursa (.SH / .SZ / .BJ). Grafik dan backtest memakai loader yang sama, jadi simbol yang tampil di sini juga bisa di-backtest.",
+    "interval_1m": "1mnt",
+    "interval_5m": "5mnt",
+    "interval_30m": "30mnt"
   },
   "journal": {
     "title": "Tinjauan transaksi",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "Jual di atas zhongshu setelah puncak",
     "verdict_no_structure": "Struktur tidak jelas",
     "verdict_against_signal": "Eksekusi berlawanan sinyal Chan",
-    "opposingSignal": "Sinyal berlawanan: {{type}}"
+    "opposingSignal": "Sinyal berlawanan: {{type}}",
+    "interval": "Interval",
+    "colMaVolume": "MA & volume",
+    "colNested": "Penyarangan",
+    "nestedAligned": "Timeframe atas mengonfirmasi",
+    "nestedWeak": "Timeframe atas netral",
+    "noTradesInWindow": "Tidak ada transaksi dalam jendela data interval ini."
+  },
+  "ma": {
+    "ma_bull_stack": "Susunan naik",
+    "ma_bear_stack": "Susunan turun",
+    "above_ma20": "Di atas MA20",
+    "below_ma20": "Di bawah MA20",
+    "pullback_shrink": "Pullback volume kecil",
+    "breakout_volume": "Breakout volume",
+    "heavy_volume_down": "Penurunan volume besar"
   }
 }

@@ -143,6 +143,19 @@ export interface ChanVerdict {
   signal_type: ChanSignals | null;
 }
 
+export interface ChanMaRule {
+  key: string;
+  effect: "support" | "against";
+}
+
+export interface ChanNested {
+  interval: string;
+  signal: ChanSignal | null;
+  zone: "above" | "inside" | "below" | "none";
+  bi_direction?: "up" | "down" | null;
+  supporting: boolean;
+}
+
 export interface ChanReviewRow {
   trade_id: string | null;
   datetime: string;
@@ -154,10 +167,13 @@ export interface ChanReviewRow {
   center: ChanCenter | null;
   bi_direction: "up" | "down" | null;
   forward: Record<string, number | null>;
+  ma_volume?: ChanMaRule[];
+  nested?: ChanNested | null;
 }
 
 export interface ChanReview {
   symbol: string;
+  interval?: string;
   structure: {
     bars: number;
     latest: ChanLatest;
@@ -814,10 +830,16 @@ export const api = {
     request<CorrelationRegimeResponse>(
       `/correlation/regime?codes=${encodeURIComponent(codes)}&days=${encodeURIComponent(String(days))}`,
     ),
-  getChanAnalysis: (symbol: string, signal?: AbortSignal) =>
-    request<ChanStructure>(`/api/chan/analysis?symbol=${encodeURIComponent(symbol)}`, { signal }),
-  getChanReview: (symbol: string, signal?: AbortSignal) =>
-    request<ChanReview>(`/api/chan/review?symbol=${encodeURIComponent(symbol)}`, { signal }),
+  getChanAnalysis: (symbol: string, interval = "1D", signal?: AbortSignal) =>
+    request<ChanStructure>(
+      `/api/chan/analysis?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}`,
+      { signal },
+    ),
+  getChanReview: (symbol: string, interval = "1D", signal?: AbortSignal) =>
+    request<ChanReview>(
+      `/api/chan/review?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}`,
+      { signal },
+    ),
   getJournalSummary: () => request<JournalSummary>("/api/journal/summary"),
   getJournalAnalysis: () => request<JournalAnalysis>("/api/journal/analysis"),
   getJournalTrades: (symbol?: string, limit = 500) => {

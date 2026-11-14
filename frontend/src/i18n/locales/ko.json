@@ -23,7 +23,8 @@
     "groups": {
       "research": "일상 리서치",
       "analysis": "전문 분석",
-      "automation": "자동화 및 설정"
+      "automation": "자동화 및 설정",
+      "trading": "트레이딩"
     },
     "howTo": "{{feature}} 사용 방법",
     "startResearch": "리서치 도우미로 시작하기",
@@ -2797,7 +2798,10 @@
     "bars": "개",
     "empty": "이 종목과 기간에 데이터가 없습니다.",
     "error": "시장 데이터를 불러오지 못했습니다.",
-    "hint": "A주 코드에는 거래소 접미사(.SH / .SZ / .BJ)가 필요합니다. 차트와 백테스트는 같은 로더를 사용하므로 여기서 표시되는 종목은 백테스트도 가능합니다."
+    "hint": "A주 코드에는 거래소 접미사(.SH / .SZ / .BJ)가 필요합니다. 차트와 백테스트는 같은 로더를 사용하므로 여기서 표시되는 종목은 백테스트도 가능합니다.",
+    "interval_1m": "1분",
+    "interval_5m": "5분",
+    "interval_30m": "30분"
   },
   "journal": {
     "title": "매매 리뷰",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "고점 이후 중추 위 매도",
     "verdict_no_structure": "구조 불명확",
     "verdict_against_signal": "반대 방향 찬 신호와 같은 날",
-    "opposingSignal": "반대 신호: {{type}}"
+    "opposingSignal": "반대 신호: {{type}}",
+    "interval": "주기",
+    "colMaVolume": "이동평균·거래량",
+    "colNested": "상위 주기",
+    "nestedAligned": "상위 주기 일치",
+    "nestedWeak": "상위 주기 중립",
+    "noTradesInWindow": "이 주기의 데이터 구간에 체결이 없습니다."
+  },
+  "ma": {
+    "ma_bull_stack": "정배열",
+    "ma_bear_stack": "역배열",
+    "above_ma20": "MA20 상회",
+    "below_ma20": "MA20 하회",
+    "pullback_shrink": "눌림 축소",
+    "breakout_volume": "거래량 돌파",
+    "heavy_volume_down": "거래량 동반 하락"
   }
 }

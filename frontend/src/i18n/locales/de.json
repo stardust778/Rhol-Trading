@@ -29,7 +29,8 @@
     "groups": {
       "research": "Tägliche Recherche",
       "analysis": "Spezialisierte Analyse",
-      "automation": "Automatisierung & Einrichtung"
+      "automation": "Automatisierung & Einrichtung",
+      "trading": "Trading"
     },
     "howTo": "So verwendest du {{feature}}",
     "startResearch": "Mit dem Rechercheassistenten starten",
@@ -2797,7 +2798,10 @@
     "bars": "Kerzen",
     "empty": "Für dieses Kürzel und diesen Zeitraum wurden keine Kerzen geliefert.",
     "error": "Marktdaten konnten nicht geladen werden.",
-    "hint": "A-Aktien-Kürzel benötigen ein Börsensuffix (.SH / .SZ / .BJ). Charts und Backtests nutzen dieselben Loader, daher lässt sich jedes hier dargestellte Kürzel auch backtesten."
+    "hint": "A-Aktien-Kürzel benötigen ein Börsensuffix (.SH / .SZ / .BJ). Charts und Backtests nutzen dieselben Loader, daher lässt sich jedes hier dargestellte Kürzel auch backtesten.",
+    "interval_1m": "1Min",
+    "interval_5m": "5Min",
+    "interval_30m": "30Min"
   },
   "journal": {
     "title": "Trade-Review",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "Verkauf über dem Zentrum nach dem Top",
     "verdict_no_structure": "Keine klare Struktur",
     "verdict_against_signal": "Gegen ein Chan-Signal ausgeführt",
-    "opposingSignal": "Gegensignal: {{type}}"
+    "opposingSignal": "Gegensignal: {{type}}",
+    "interval": "Intervall",
+    "colMaVolume": "MA & Volumen",
+    "colNested": "Übergeordnet",
+    "nestedAligned": "Höherer Rahmen bestätigt",
+    "nestedWeak": "Höherer Rahmen neutral",
+    "noTradesInWindow": "Keine Ausführungen im Datenfenster dieses Intervalls."
+  },
+  "ma": {
+    "ma_bull_stack": "Bullische Staffelung",
+    "ma_bear_stack": "Bärische Staffelung",
+    "above_ma20": "Über MA20",
+    "below_ma20": "Unter MA20",
+    "pullback_shrink": "Rücksetzer mit wenig Volumen",
+    "breakout_volume": "Ausbruch mit Volumen",
+    "heavy_volume_down": "Rückgang mit hohem Volumen"
   }
 }

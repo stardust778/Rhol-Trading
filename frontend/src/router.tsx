@@ -1,5 +1,5 @@
 import { Suspense, lazy, type ComponentType } from "react";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { Layout } from "@/components/layout/Layout";
 
 const Home = lazy(() => import("@/pages/Home").then((m) => ({ default: m.Home })));
@@ -65,9 +65,9 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: "/", element: wrap(Agent) },
-      { path: "/about", element: wrap(Home) },
+      { path: "/", element: <Navigate to="/market" replace /> },
       { path: "/agent", element: wrap(Agent) },
+      { path: "/about", element: wrap(Home) },
       { path: "/pixel-office", element: wrap(PixelOffice) },
       { path: "/runtime", element: wrap(Runtime) },
       { path: "/scheduled", element: wrap(Scheduled) },

@@ -29,7 +29,8 @@
     "groups": {
       "research": "Everyday research",
       "analysis": "Specialized analysis",
-      "automation": "Automation & setup"
+      "automation": "Automation & setup",
+      "trading": "Trading"
     },
     "howTo": "How to use {{feature}}",
     "startResearch": "Start with the research assistant",
@@ -2797,7 +2798,10 @@
     "bars": "bars",
     "empty": "No bars returned for this symbol and range.",
     "error": "Failed to load market data.",
-    "hint": "A-share codes need an exchange suffix (.SH / .SZ / .BJ). Charts and backtests share the same loaders, so a symbol that charts here can also be backtested."
+    "hint": "A-share codes need an exchange suffix (.SH / .SZ / .BJ). Charts and backtests share the same loaders, so a symbol that charts here can also be backtested.",
+    "interval_1m": "1m",
+    "interval_5m": "5m",
+    "interval_30m": "30m"
   },
   "journal": {
     "title": "Trade journal",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "Sell after the top, above center",
     "verdict_no_structure": "No clear structure",
     "verdict_against_signal": "Filled against a Chan signal",
-    "opposingSignal": "Opposing: {{type}}"
+    "opposingSignal": "Opposing: {{type}}",
+    "interval": "Interval",
+    "colMaVolume": "MA / volume",
+    "colNested": "Nested",
+    "nestedAligned": "Parent confirms",
+    "nestedWeak": "Parent neutral",
+    "noTradesInWindow": "No fills fall inside this interval's data window."
+  },
+  "ma": {
+    "ma_bull_stack": "MA bull stack",
+    "ma_bear_stack": "MA bear stack",
+    "above_ma20": "Above MA20",
+    "below_ma20": "Below MA20",
+    "pullback_shrink": "Shrinking pullback",
+    "breakout_volume": "Volume breakout",
+    "heavy_volume_down": "Heavy-volume decline"
   }
 }

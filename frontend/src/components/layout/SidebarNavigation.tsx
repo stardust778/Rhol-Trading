@@ -38,7 +38,7 @@ export function SidebarNavigation({ collapsed }: { collapsed: boolean }) {
   }, [menuOpen]);
 
   const groups = (compact: boolean, drawer = false) => NAVIGATION_GROUPS.map(({ id, items }) => (
-    <section key={id} aria-label={t(`navigation.groups.${id}`)} className={cn(id !== "research" && "border-t border-border/60 pt-2")}>
+    <section key={id} aria-label={t(`navigation.groups.${id}`)} className={cn(id !== "trading" && "border-t border-border/60 pt-2")}>
       {!compact && <p className={cn("mb-1 px-3 text-[10px] font-medium text-muted-foreground/70", !drawer && "max-md:hidden")}>{t(`navigation.groups.${id}`)}</p>}
       <div className="space-y-0.5">
         {items.map(({ id: itemId, to, icon: Icon }) => {

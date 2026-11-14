@@ -28,7 +28,9 @@ MAX_LOOKBACK_DAYS = 365 * 20
 DEFAULT_LOOKBACK_DAYS = 365
 DEFAULT_MAX_BARS = 2000
 MAX_BARS = 5000
-_ALLOWED_INTERVALS = {"1D", "1W", "1M"}
+from src.market_intraday import INTERVALS as _INTRADAY_INTERVALS
+
+_ALLOWED_INTERVALS = {"1D", "1W", "1M", *_INTRADAY_INTERVALS}
 # A bare alphabetic ticker has no venue: the shared router would send it to the
 # A-share chain, burn ~20s failing every source, and still return nothing. The
 # app's identity contract already requires a suffix, so reject it up front.
@@ -172,7 +174,7 @@ def register_market_routes(
         symbol: str = Query(..., min_length=1, max_length=32, description="Instrument code, e.g. 000001.SZ"),
         start: str | None = Query(None, description="Inclusive start date (YYYY-MM-DD)"),
         end: str | None = Query(None, description="Inclusive end date (YYYY-MM-DD)"),
-        interval: str = Query("1D", description="1D | 1W | 1M"),
+        interval: str = Query("1D", description="1m | 5m | 30m | 60m | 1D | 1W | 1M"),
         source: str = Query("auto", max_length=32, description="Loader name or 'auto'"),
         max_bars: int = Query(DEFAULT_MAX_BARS, ge=1, le=MAX_BARS),
     ):
@@ -201,6 +203,44 @@ def register_market_routes(
                 status_code=400,
                 detail=f"interval must be one of {sorted(_ALLOWED_INTERVALS)}, got {interval!r}",
             )
+
+        if interval in _INTRADAY_INTERVALS:
+            from src.market_data import lookup_instrument_name
+            from src.market_intraday import fetch_intraday, frame_to_bars
+
+            key = (code, interval, "intraday", str(max_bars), source)
+            cached = _cache_get(key)
+            if cached is not None:
+                return cached
+            try:
+                frame, served_by = await asyncio.to_thread(
+                    fetch_intraday, code, interval, min(max_bars, 1000)
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=404, detail=str(exc)) from exc
+            except Exception:
+                logger.exception("intraday fetch failed for %s %s", code, interval)
+                raise HTTPException(
+                    status_code=502,
+                    detail="Intraday market data request failed. Check connectivity and retry.",
+                )
+            name = await asyncio.to_thread(lookup_instrument_name, code)
+            body = {
+                "symbol": code,
+                "name": name,
+                "interval": interval,
+                "start": str(frame.index.min())[:16],
+                "end": str(frame.index.max())[:16],
+                "source": served_by,
+                "requested_source": served_by,
+                "detected_source": served_by,
+                "fallback_used": False,
+                "adjustment": "raw",
+                "volume_unit": "shares",
+                "bars": frame_to_bars(frame)[-max_bars:],
+            }
+            _cache_put(key, body)
+            return body
 
         today = date.today()
         end_day = _parse_day(end, "end") if end else today

@@ -33,8 +33,8 @@ def _clear_cache():
 
 @pytest.fixture()
 def client(monkeypatch) -> TestClient:
-    monkeypatch.setattr(chan_routes, "_build_structure", lambda symbol, start, end: STRUCTURE)
-    monkeypatch.setattr(chan_routes, "_review_symbol", lambda symbol, start, end: REVIEW)
+    monkeypatch.setattr(chan_routes, "_build_structure", lambda symbol, start, end, interval: STRUCTURE)
+    monkeypatch.setattr(chan_routes, "_review_symbol", lambda symbol, start, end, interval: REVIEW)
     app = FastAPI()
     chan_routes.register_chan_routes(app, require_auth=lambda: None)
     return TestClient(app)
@@ -52,7 +52,7 @@ def test_analysis_caches_repeat_requests(client, monkeypatch):
     monkeypatch.setattr(
         chan_routes,
         "_build_structure",
-        lambda symbol, start, end: calls.append(symbol) or STRUCTURE,
+        lambda symbol, start, end, interval: calls.append(symbol) or STRUCTURE,
     )
 
     assert client.get("/api/chan/analysis", params={"symbol": "600519.SH"}).status_code == 200
@@ -75,7 +75,7 @@ def test_signals_helper_returns_only_signals(client):
 
 
 def test_analysis_maps_missing_data_to_404(client, monkeypatch):
-    def boom(symbol, start, end):
+    def boom(symbol, start, end, interval):
         raise ValueError("No daily bars for BAD.XX")
 
     monkeypatch.setattr(chan_routes, "_build_structure", boom)

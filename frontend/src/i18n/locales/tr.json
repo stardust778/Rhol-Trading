@@ -2436,7 +2436,8 @@
     "groups": {
       "research": "Günlük araştırma",
       "analysis": "Uzmanlık analizleri",
-      "automation": "Otomasyon ve kurulum"
+      "automation": "Otomasyon ve kurulum",
+      "trading": "İşlem"
     },
     "howTo": "{{feature}} nasıl kullanılır",
     "startResearch": "Araştırma asistanıyla başlayın",
@@ -2797,7 +2798,10 @@
     "bars": "mum",
     "empty": "Bu sembol ve aralık için mum dönmedi.",
     "error": "Piyasa verileri yüklenemedi.",
-    "hint": "A hissesi kodları borsa soneki gerektirir (.SH / .SZ / .BJ). Grafikler ve geri testler aynı yükleyicileri kullanır; burada grafiği görünen sembol geri test de edilebilir."
+    "hint": "A hissesi kodları borsa soneki gerektirir (.SH / .SZ / .BJ). Grafikler ve geri testler aynı yükleyicileri kullanır; burada grafiği görünen sembol geri test de edilebilir.",
+    "interval_1m": "1dk",
+    "interval_5m": "5dk",
+    "interval_30m": "30dk"
   },
   "journal": {
     "title": "İşlem incelemesi",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "Tepeden sonra merkez üstünde satış",
     "verdict_no_structure": "Yapı belirsiz",
     "verdict_against_signal": "Chan sinyalinin tersine işlem",
-    "opposingSignal": "Karşıt sinyal: {{type}}"
+    "opposingSignal": "Karşıt sinyal: {{type}}",
+    "interval": "Periyot",
+    "colMaVolume": "Ortalama ve hacim",
+    "colNested": "Üst periyot",
+    "nestedAligned": "Üst periyot teyit ediyor",
+    "nestedWeak": "Üst periyot nötr",
+    "noTradesInWindow": "Bu periyodun veri aralığında işlem yok."
+  },
+  "ma": {
+    "ma_bull_stack": "Yükseliş dizilimi",
+    "ma_bear_stack": "Düşüş dizilimi",
+    "above_ma20": "MA20 üzerinde",
+    "below_ma20": "MA20 altında",
+    "pullback_shrink": "Hacim azalan geri çekilme",
+    "breakout_volume": "Hacimli kırılım",
+    "heavy_volume_down": "Yüksek hacimli düşüş"
   }
 }

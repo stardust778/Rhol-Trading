@@ -174,3 +174,56 @@ def test_review_trades_skips_dividends_and_unknown_dates():
     ]
 
     assert analyzer.review_trades(structure=structure, frame=frame, trades=trades) == []
+
+
+def test_review_marks_parent_interval_confirmation():
+    dates = pd.date_range("2026-01-01", periods=10, freq="D")
+    frame = pd.DataFrame(
+        {"open": [10.0] * 10, "high": [10.2] * 10, "low": [9.8] * 10, "close": [10.0] * 10, "volume": [1000] * 10},
+        index=dates,
+    )
+    child_structure = {"bis": [], "centers": [], "signals": []}
+    parent_structure = {
+        "bis": [],
+        "centers": [],
+        "signals": [{"date": "2026-01-05", "type": "1buy", "price": 9.9}],
+    }
+    trades = [{"trade_id": "t1", "datetime": "2026-01-05 10:00:00", "side": "buy", "price": 10.0}]
+
+    review = analyzer.review_trades(
+        structure=child_structure,
+        frame=frame,
+        trades=trades,
+        interval="1D",
+        parent=(frame, parent_structure),
+    )[0]
+
+    assert review["nested"]["interval"] == "1W"
+    assert review["nested"]["signal"]["type"] == "1buy"
+    assert review["nested"]["supporting"] is True
+
+
+def test_review_includes_ma_volume_rules():
+    dates = pd.date_range("2026-01-01", periods=30, freq="D")
+    closes = [10.0 + index * 0.05 for index in range(30)]
+    frame = pd.DataFrame(
+        {
+            "open": closes,
+            "high": [value + 0.1 for value in closes],
+            "low": [value - 0.1 for value in closes],
+            "close": closes,
+            "volume": [1000] * 30,
+        },
+        index=dates,
+    )
+    trades = [{"trade_id": "t1", "datetime": "2026-01-30 10:00:00", "side": "buy", "price": closes[-1]}]
+
+    review = analyzer.review_trades(
+        structure={"bis": [], "centers": [], "signals": []},
+        frame=frame,
+        trades=trades,
+        interval="1D",
+    )[0]
+
+    assert review["ma_volume"]
+    assert all({"key", "effect"} <= set(rule) for rule in review["ma_volume"])

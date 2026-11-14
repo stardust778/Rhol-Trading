@@ -126,9 +126,39 @@ def test_ohlc_404_when_unresolved(monkeypatch):
 def test_ohlc_rejects_bad_interval():
     response = _client().get(
         "/api/market/ohlc",
-        params={"symbol": "000001.SZ", "interval": "5m"},
+        params={"symbol": "000001.SZ", "interval": "2h"},
     )
     assert response.status_code == 400
+
+
+def test_ohlc_routes_intraday_intervals_to_the_minute_endpoint(monkeypatch):
+    import pandas as pd
+
+    from src import market_intraday
+
+    frame = pd.DataFrame(
+        {
+            "open": [11.8, 11.9],
+            "high": [11.9, 12.0],
+            "low": [11.7, 11.8],
+            "close": [11.9, 12.0],
+            "volume": [100.0, 200.0],
+        },
+        index=pd.to_datetime(["2026-11-13 14:30", "2026-11-13 15:00"]),
+    )
+    monkeypatch.setattr(market_intraday, "fetch_intraday", lambda symbol, interval, limit: (frame, "sina"))
+
+    response = _client().get(
+        "/api/market/ohlc",
+        params={"symbol": "000001.SZ", "interval": "30m"},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["source"] == "sina"
+    assert body["adjustment"] == "raw"
+    assert body["volume_unit"] == "shares"
+    assert [bar["time"] for bar in body["bars"]] == ["2026-11-13 14:30", "2026-11-13 15:00"]
 
 
 def test_ohlc_rejects_bad_date():

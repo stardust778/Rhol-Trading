@@ -29,7 +29,8 @@
     "groups": {
       "research": "Pesquisa cotidiana",
       "analysis": "Análise especializada",
-      "automation": "Automação e configuração"
+      "automation": "Automação e configuração",
+      "trading": "Trading"
     },
     "howTo": "Como usar {{feature}}",
     "startResearch": "Comece com o assistente de pesquisa",
@@ -2797,7 +2798,10 @@
     "bars": "candles",
     "empty": "Nenhum candle retornado para este símbolo e período.",
     "error": "Falha ao carregar os dados de mercado.",
-    "hint": "Códigos de ações A precisam de sufixo de bolsa (.SH / .SZ / .BJ). Gráficos e backtests usam os mesmos loaders, então um símbolo exibido aqui também pode ser testado."
+    "hint": "Códigos de ações A precisam de sufixo de bolsa (.SH / .SZ / .BJ). Gráficos e backtests usam os mesmos loaders, então um símbolo exibido aqui também pode ser testado.",
+    "interval_1m": "1min",
+    "interval_5m": "5min",
+    "interval_30m": "30min"
   },
   "journal": {
     "title": "Revisão de operações",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "Venda acima do centro após o topo",
     "verdict_no_structure": "Estrutura indefinida",
     "verdict_against_signal": "Executado contra um sinal Chan",
-    "opposingSignal": "Sinal oposto: {{type}}"
+    "opposingSignal": "Sinal oposto: {{type}}",
+    "interval": "Intervalo",
+    "colMaVolume": "Médias e volume",
+    "colNested": "Aninhamento",
+    "nestedAligned": "Marco superior confirma",
+    "nestedWeak": "Marco superior neutro",
+    "noTradesInWindow": "Nenhuma operação dentro da janela de dados deste intervalo."
+  },
+  "ma": {
+    "ma_bull_stack": "Alinhamento de alta",
+    "ma_bear_stack": "Alinhamento de baixa",
+    "above_ma20": "Acima da MA20",
+    "below_ma20": "Abaixo da MA20",
+    "pullback_shrink": "Correção com volume baixo",
+    "breakout_volume": "Rompimento com volume",
+    "heavy_volume_down": "Queda com volume alto"
   }
 }

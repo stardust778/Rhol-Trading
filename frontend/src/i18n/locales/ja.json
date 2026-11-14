@@ -23,7 +23,8 @@
     "groups": {
       "research": "日々のリサーチ",
       "analysis": "専門分析",
-      "automation": "自動化と設定"
+      "automation": "自動化と設定",
+      "trading": "トレード"
     },
     "howTo": "{{feature}}の使い方",
     "startResearch": "リサーチアシスタントから始める",
@@ -2797,7 +2798,10 @@
     "bars": "本",
     "empty": "この銘柄と期間のデータはありません。",
     "error": "市場データの読み込みに失敗しました。",
-    "hint": "A株のコードには取引所サフィックス（.SH / .SZ / .BJ）が必要です。チャートとバックテストは同じローダーを使うため、ここで表示できる銘柄はバックテストも可能です。"
+    "hint": "A株のコードには取引所サフィックス（.SH / .SZ / .BJ）が必要です。チャートとバックテストは同じローダーを使うため、ここで表示できる銘柄はバックテストも可能です。",
+    "interval_1m": "1分",
+    "interval_5m": "5分",
+    "interval_30m": "30分"
   },
   "journal": {
     "title": "取引レビュー",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "天井後の中枢上方売り",
     "verdict_no_structure": "構造不明",
     "verdict_against_signal": "逆方向のチャン信号と同じ日",
-    "opposingSignal": "逆信号: {{type}}"
+    "opposingSignal": "逆信号: {{type}}",
+    "interval": "足種",
+    "colMaVolume": "移動平均・出来高",
+    "colNested": "上位足",
+    "nestedAligned": "上位足が一致",
+    "nestedWeak": "上位足は中立",
+    "noTradesInWindow": "この足種のデータ期間内に約定がありません。"
+  },
+  "ma": {
+    "ma_bull_stack": "強気配列",
+    "ma_bear_stack": "弱気配列",
+    "above_ma20": "MA20上",
+    "below_ma20": "MA20下",
+    "pullback_shrink": "押し目縮小",
+    "breakout_volume": "出来高ブレイク",
+    "heavy_volume_down": "出来高急増の下落"
   }
 }

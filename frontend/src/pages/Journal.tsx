@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { Loader2, Trash2, Upload } from "lucide-react";
 import { CandlestickChart } from "@/components/charts/CandlestickChart";
@@ -7,6 +8,7 @@ import {
   api,
   type ChanReview,
   type ChanReviewRow,
+  type ChanStructure,
   type JournalAnalysis,
   type JournalBehaviorMetric,
   type JournalSummary,
@@ -48,11 +50,12 @@ function shiftDays(iso: string, days: number): string {
 
 export function Journal() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const fileInput = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<JournalSummary | null>(null);
   const [analysis, setAnalysis] = useState<JournalAnalysis | null>(null);
   const [trades, setTrades] = useState<JournalTrade[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(() => searchParams.get("symbol"));
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -343,7 +346,7 @@ function MonthlyBars({ months }: { months: Array<{ month: string; pnl: number; t
       {months.map((month) => {
         const height = Math.max(3, Math.round((Math.abs(month.pnl) / max) * 100));
         return (
-          <div key={month.month} className="flex min-w-[28px] flex-1 flex-col items-center justify-end gap-1" title={`${month.month}: ${month.pnl}`}>
+          <div key={month.month} className="flex h-full min-w-[28px] flex-1 flex-col items-center justify-end gap-1" title={`${month.month}: ${month.pnl}`}>
             <span className={cn("text-[9px] tabular-nums", month.pnl >= 0 ? "text-success" : "text-danger")}>
               {Math.round(month.pnl)}
             </span>
@@ -361,9 +364,12 @@ function MonthlyBars({ months }: { months: Array<{ month: string; pnl: number; t
 
 function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void }) {
   const { t } = useTranslation();
+  const [interval, setIntervalKey] = useState("1D");
   const [payload, setPayload] = useState<MarketOhlcResponse | null>(null);
   const [markers, setMarkers] = useState<TradeMarker[]>([]);
-  const [chan, setChan] = useState<ChanReview | null>(null);
+  const [review, setReview] = useState<ChanReview | null>(null);
+  const [tradeCount, setTradeCount] = useState(0);
+  const [structure, setStructure] = useState<ChanStructure | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -371,27 +377,46 @@ function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void 
     const controller = new AbortController();
     setLoading(true);
     setError(null);
+    const intraday = INTERVAL_OPTIONS.includes(interval) && INTRADAY_INTERVALS.has(interval);
     (async () => {
-      const [own, chanReview] = await Promise.all([
+      const [own, chanReview, chanStructure] = await Promise.all([
         api.getJournalTrades(symbol, 2000),
-        api.getChanReview(symbol, controller.signal).catch(() => null),
+        api.getChanReview(symbol, interval, controller.signal).catch(() => null),
+        api.getChanAnalysis(symbol, interval, controller.signal).catch(() => null),
       ]);
-      const dates = own.trades.map((row) => row.datetime.slice(0, 10)).sort();
-      const start = dates[0] ? shiftDays(dates[0], -90) : undefined;
-      const end = dates[dates.length - 1] ? shiftDays(dates[dates.length - 1], 5) : undefined;
-      const next = await api.getMarketOhlc(symbol, { start, end, interval: "1D" }, controller.signal);
+      let next: MarketOhlcResponse;
+      if (intraday) {
+        next = await api.getMarketOhlc(symbol, { interval, maxBars: 1000 }, controller.signal);
+      } else {
+        const dates = own.trades.map((row) => row.datetime.slice(0, 10)).sort();
+        const start = dates[0] ? shiftDays(dates[0], -90) : undefined;
+        const end = dates[dates.length - 1] ? shiftDays(dates[dates.length - 1], 5) : undefined;
+        next = await api.getMarketOhlc(symbol, { start, end, interval }, controller.signal);
+      }
       if (controller.signal.aborted) return;
+      const barTimes = next.bars.map((bar) => bar.time);
+      const toBarTime = (row: JournalTrade) => {
+        const target = intraday ? row.datetime.slice(0, 16) : row.datetime.slice(0, 10);
+        return barTimes.find((time) => time >= target) ?? null;
+      };
       setPayload(next);
-      setChan(chanReview);
+      setReview(chanReview);
+      setTradeCount(own.trades.length);
+      setStructure(chanStructure);
       setMarkers(
         own.trades
           .filter((row) => row.side === "buy" || row.side === "sell")
-          .map((row) => ({
-            time: row.datetime.slice(0, 10),
-            side: row.side === "buy" ? "BUY" : "SELL",
-            price: row.price,
-            qty: row.quantity,
-          })),
+          .map((row): TradeMarker | null => {
+            const time = toBarTime(row);
+            if (!time) return null;
+            return {
+              time,
+              side: row.side === "buy" ? "BUY" : "SELL",
+              price: row.price,
+              qty: row.quantity,
+            };
+          })
+          .filter((marker): marker is TradeMarker => marker !== null),
       );
     })()
       .catch((err) => {
@@ -401,14 +426,27 @@ function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void 
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [symbol, t]);
+  }, [symbol, interval, t]);
 
   return (
     <section className="space-y-2">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-sm font-semibold">
           {t("journal.chartTitle", { symbol })}
         </h2>
+        <div role="group" aria-label={t("chan.interval")} className="flex overflow-hidden rounded-md border text-[11px]">
+          {INTERVAL_OPTIONS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={interval === option}
+              onClick={() => setIntervalKey(option)}
+              className={cn("px-2 py-1", interval === option ? "bg-primary text-primary-foreground" : "hover:bg-muted")}
+            >
+              {t(`market.interval_${option}` as never)}
+            </button>
+          ))}
+        </div>
         <span className="text-[11px] text-muted-foreground">{t("journal.chartHint")}</span>
         <button type="button" onClick={onClose} className="ms-auto rounded border px-2 py-1 text-xs hover:bg-muted">
           {t("journal.hideChart")}
@@ -420,17 +458,26 @@ function SymbolChart({ symbol, onClose }: { symbol: string; onClose: () => void 
         ) : error ? (
           <div className="flex h-[420px] items-center justify-center text-sm text-danger">{error}</div>
         ) : payload && payload.bars.length > 0 ? (
-          <CandlestickChart data={payload.bars} markers={markers} height={420} />
+          <CandlestickChart
+            data={payload.bars}
+            markers={markers}
+            chan={structure ? { bis: structure.bis, centers: structure.centers, signals: structure.signals } : undefined}
+            height={420}
+            defaultOverlays={["ma5", "ma10", "ma20", "ma30", "ma55", "ma99", "ma128", "ma225"]}
+          />
         ) : (
           <div className="flex h-[420px] items-center justify-center text-sm text-muted-foreground">{t("journal.chartEmpty")}</div>
         )}
       </div>
-      {chan && <ChanReviewPanel review={chan} />}
+      {review && <ChanReviewPanel review={review} tradeCount={tradeCount} />}
     </section>
   );
 }
 
-function ChanReviewPanel({ review }: { review: ChanReview }) {
+const INTERVAL_OPTIONS = ["1m", "5m", "30m", "1D", "1W"];
+const INTRADAY_INTERVALS = new Set(["1m", "5m", "30m", "60m"]);
+
+function ChanReviewPanel({ review, tradeCount }: { review: ChanReview; tradeCount: number }) {
   const { t } = useTranslation();
   const latest = review.structure.latest;
   const center = latest.center;
@@ -458,7 +505,9 @@ function ChanReviewPanel({ review }: { review: ChanReview }) {
       </div>
 
       {review.trades.length === 0 ? (
-        <p className="text-xs text-muted-foreground">{t("chan.noTrades")}</p>
+        <p className="text-xs text-muted-foreground">
+          {tradeCount > 0 ? t("chan.noTradesInWindow") : t("chan.noTrades")}
+        </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -469,6 +518,8 @@ function ChanReviewPanel({ review }: { review: ChanReview }) {
                 <th className="py-1.5 pe-3 text-end font-medium">{t("chan.colPrice")}</th>
                 <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colVerdict")}</th>
                 <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colSignal")}</th>
+                <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colMaVolume")}</th>
+                <th className="py-1.5 pe-3 text-start font-medium">{t("chan.colNested")}</th>
                 <th className="py-1.5 pe-3 text-end font-medium">{t("chan.colFwd", { n: 5 })}</th>
                 <th className="py-1.5 pe-3 text-end font-medium">{t("chan.colFwd", { n: 10 })}</th>
                 <th className="py-1.5 text-end font-medium">{t("chan.colFwd", { n: 20 })}</th>
@@ -505,6 +556,33 @@ function ChanReviewTableRow({ row }: { row: ChanReviewRow }) {
           : row.opposing_signal
             ? t("chan.opposingSignal", { type: t(`chan.type_${row.opposing_signal.type}`) })
             : "—"}
+      </td>
+      <td className="py-1.5 pe-3">
+        <div className="flex flex-wrap gap-1">
+          {(row.ma_volume ?? []).map((rule) => (
+            <span
+              key={rule.key}
+              className={cn(
+                "rounded-full border px-1.5 py-0.5 text-[10px]",
+                rule.effect === "support" ? "border-success/40 text-success" : "border-danger/40 text-danger",
+              )}
+            >
+              {t(`ma.${rule.key}` as never)}
+            </span>
+          ))}
+        </div>
+      </td>
+      <td className="py-1.5 pe-3">
+        {row.nested ? (
+          <span className={cn("text-[10px]", row.nested.supporting ? "text-success" : "text-muted-foreground")}>
+            {row.nested.supporting ? t("chan.nestedAligned") : t("chan.nestedWeak")}
+            {" · "}
+            {t(`market.interval_${row.nested.interval}` as never)}
+            {row.nested.signal ? ` · ${t(`chan.type_${row.nested.signal.type}`)}` : ""}
+          </span>
+        ) : (
+          <span className="text-[10px] text-muted-foreground">—</span>
+        )}
       </td>
       {[5, 10, 20].map((horizon) => {
         const value = row.forward[String(horizon)];

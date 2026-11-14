@@ -23,7 +23,8 @@
     "groups": {
       "research": "日常研究",
       "analysis": "专项分析",
-      "automation": "自动化与设置"
+      "automation": "自动化与设置",
+      "trading": "交易"
     },
     "howTo": "{{feature}}怎么用",
     "startResearch": "从研究助手开始",
@@ -2797,7 +2798,10 @@
     "bars": "根",
     "empty": "该代码在此区间没有数据。",
     "error": "行情加载失败。",
-    "hint": "A 股代码必须带交易所后缀（.SH / .SZ / .BJ）。图表与回测走同一套 loader，这里能画的标的就能回测。"
+    "hint": "A 股代码必须带交易所后缀（.SH / .SZ / .BJ）。图表与回测走同一套 loader，这里能画的标的就能回测。",
+    "interval_1m": "1分",
+    "interval_5m": "5分",
+    "interval_30m": "30分"
   },
   "journal": {
     "title": "交易复盘",
@@ -2889,6 +2893,21 @@
     "verdict_above_chase_sell": "顶部之后的中枢上方卖出",
     "verdict_no_structure": "结构不明确",
     "verdict_against_signal": "与缠论反向信号同日",
-    "opposingSignal": "反向信号：{{type}}"
+    "opposingSignal": "反向信号：{{type}}",
+    "interval": "级别",
+    "colMaVolume": "均线量价",
+    "colNested": "区间套",
+    "nestedAligned": "高级别共振",
+    "nestedWeak": "高级别中性",
+    "noTradesInWindow": "该级别的数据窗口内没有成交。"
+  },
+  "ma": {
+    "ma_bull_stack": "均线多头排列",
+    "ma_bear_stack": "均线空头排列",
+    "above_ma20": "站上MA20",
+    "below_ma20": "跌破MA20",
+    "pullback_shrink": "回踩缩量",
+    "breakout_volume": "放量突破",
+    "heavy_volume_down": "放量下跌"
   }
 }

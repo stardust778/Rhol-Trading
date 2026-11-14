@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import i18n from "@/i18n";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
-import type { PriceBar, TradeMarker, IndicatorPoint } from "@/lib/api";
+import type { ChanBi, ChanCenter, ChanSignal, PriceBar, TradeMarker, IndicatorPoint } from "@/lib/api";
 import { calcMA, calcBOLL, calcMACD, calcRSI, calcKDJ, calcEMA } from "@/lib/indicators";
 import { getChartTheme } from "@/lib/chart-theme";
 import { abbreviateNum } from "@/lib/formatters";
@@ -44,9 +44,11 @@ interface Props {
   height?: number;
   /** Overlays selected on first render; the chart menu stays interactive. */
   defaultOverlays?: Overlay[];
+  /** Chan strokes / centers / buy-sell points drawn on top of the candles. */
+  chan?: { bis: ChanBi[]; centers: ChanCenter[]; signals: ChanSignal[] };
 }
 
-export function CandlestickChart({ data, markers, indicators, height = 500, defaultOverlays }: Props) {
+export function CandlestickChart({ data, markers, indicators, height = 500, defaultOverlays, chan }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<ReturnType<typeof echarts.init> | null>(null);
   const [sub, setSub] = useState<Sub>("vol");
@@ -187,6 +189,22 @@ export function CandlestickChart({ data, markers, indicators, height = 500, defa
       label: { color: "#fff", fontSize: 10, fontWeight: "bold" as const },
     }));
 
+    // Chan buy/sell points share the markPoint layer with the user's fills,
+    // but keep a distinct label (1B/2S/3B…) and outline so they are readable
+    // next to B/S trade marks.
+    const chanLabels: Record<string, string> = {
+      "1buy": "1B", "2buy": "2B", "3buy": "3B",
+      "1sell": "1S", "2sell": "2S", "3sell": "3S",
+    };
+    const chanMarks = (chan?.signals || []).map(signal => ({
+      coord: [signal.date, signal.price] as [string, number],
+      value: chanLabels[signal.type] || signal.type,
+      name: `${escapeHtml(signal.type)} @ ${escapeHtml(signal.date)}`,
+      symbol: "pin",
+      itemStyle: { color: signal.type.endsWith("buy") ? t.upColor : t.downColor, opacity: 0.75 },
+      label: { color: "#fff", fontSize: 9, fontWeight: "bold" as const },
+    }));
+
     // Volume
     const vol = data.map((d, i) => ({
       value: d.volume,
@@ -224,6 +242,27 @@ export function CandlestickChart({ data, markers, indicators, height = 500, defa
       ];
       legendNames.push("%K", "%D", "%J");
     }
+
+    // Chan strokes: one polyline through every stroke endpoint.
+    const biPoints: [string, number][] = [];
+    for (const [index, bi] of (chan?.bis || []).entries()) {
+      if (index === 0) biPoints.push([bi.start, bi.start_price]);
+      biPoints.push([bi.end, bi.end_price]);
+    }
+    const chanBiSeries = biPoints.length > 1
+      ? [{
+          name: "BI",
+          type: "line" as const,
+          data: biPoints,
+          xAxisIndex: 0,
+          yAxisIndex: 0,
+          symbol: "circle" as const,
+          symbolSize: 3,
+          lineStyle: { width: 1.2, color: "#a855f7" },
+          itemStyle: { color: "#a855f7" },
+          z: 5,
+        }]
+      : [];
 
     // Backend custom indicators (Map-based O(1) lookup)
     const extraSeries = extraIndicators.map((ind, i) => {
@@ -286,14 +325,30 @@ export function CandlestickChart({ data, markers, indicators, height = 500, defa
         {
           name: "K", type: "candlestick", data: candle, xAxisIndex: 0, yAxisIndex: 0,
           itemStyle: { color: t.upColor, color0: t.downColor, borderColor: t.upColor, borderColor0: t.downColor },
-          markPoint: marks.length > 0 ? { data: marks, symbolSize: 28, tooltip: { formatter: (p: { name?: string; value?: string }) => p.name || p.value || "" } } : undefined,
+          markPoint: (marks.length + chanMarks.length) > 0
+            ? {
+                data: [...marks, ...chanMarks],
+                symbolSize: 26,
+                tooltip: { formatter: (p: { name?: string; value?: string }) => p.name || p.value || "" },
+              }
+            : undefined,
+          markArea: (chan?.centers?.length ?? 0) > 0
+            ? {
+                silent: true,
+                data: (chan?.centers || []).map(center => [
+                  { xAxis: center.start, yAxis: center.zd, itemStyle: { color: "rgba(168, 85, 247, 0.10)" }, label: { show: false } },
+                  { xAxis: center.end, yAxis: center.zg },
+                ]),
+              }
+            : undefined,
         },
+        ...chanBiSeries,
         ...overlaySeries,
         ...extraSeries,
         ...subSeries,
       ],
     }, true);
-  }, [data, markers, baseData, indicatorCache, extraIndicators, sub, range, overlays, dark]);
+  }, [data, markers, chan, baseData, indicatorCache, extraIndicators, sub, range, overlays, dark]);
 
   if (data.length === 0) {
     return <div className="text-muted-foreground text-sm p-4">{i18n.t("charts.noPriceData")}</div>;
